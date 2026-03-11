@@ -1,0 +1,2113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema Domus — Propuesta</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #ffffff;
+  --bg-alt: #f5f5f7;
+  --text: #1d1d1f;
+  --text-secondary: #86868b;
+  --blue: #0071e3;
+  --blue-hover: #0077ed;
+  --border: #d2d2d7;
+  --shadow-sm: 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-md: 0 20px 40px rgba(0,0,0,0.08);
+  --shadow-lg: 0 40px 80px rgba(0,0,0,0.10);
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-xl: 32px;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─────────────────────────────── PROGRESS ── */
+#progress {
+  position: fixed; top: 0; left: 0; height: 2px;
+  background: linear-gradient(90deg, #8a3ebf, #419965);
+  z-index: 1000; width: 0%; transition: width 0.1s linear;
+  border-radius: 0 2px 2px 0;
+}
+
+/* ─────────────────────────────── PLAY BTN ── */
+.play-btn {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  background: rgba(255,255,255,0.85);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px 24px;
+  border-radius: 99px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  z-index: 1000;
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s var(--ease-apple);
+}
+.play-btn:hover {
+  background: var(--text);
+  color: #fff;
+  border-color: var(--text);
+  transform: scale(1.04);
+}
+
+/* ─────────────────────────────── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 0 48px;
+  height: 52px;
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(255,255,255,0);
+  backdrop-filter: blur(0px);
+  transition: background 0.5s, backdrop-filter 0.5s, border-color 0.5s;
+  border-bottom: 1px solid transparent;
+}
+nav.scrolled {
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom-color: rgba(0,0,0,0.08);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-logo img {
+  height: 28px;
+  width: auto;
+}
+.nav-logo-text {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.nav-dots { display: flex; gap: 6px; }
+.nav-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(0,0,0,0.15);
+  transition: background 0.3s, transform 0.3s;
+  cursor: pointer;
+}
+.nav-dot.active { background: var(--blue); transform: scale(1.5); }
+
+/* ─────────────────────────────── SECTIONS ── */
+section {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 120px 48px; position: relative; overflow: hidden;
+}
+
+/* ─────────────────────────────── REVEAL ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px) scale(0.98);
+  transition: opacity 1.2s var(--ease-apple), transform 1.2s var(--ease-apple);
+}
+.reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
+.reveal-delay-1 { transition-delay: 0.08s; }
+.reveal-delay-2 { transition-delay: 0.16s; }
+.reveal-delay-3 { transition-delay: 0.26s; }
+.reveal-delay-4 { transition-delay: 0.38s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+.reveal-delay-6 { transition-delay: 0.64s; }
+.reveal-delay-7 { transition-delay: 0.78s; }
+.reveal-delay-8 { transition-delay: 0.92s; }
+
+/* ─────────────────────────────── GRADIENT TEXT ── */
+/* Empieza en escala de grises, se colorea al hacer scroll */
+.grad-text {
+  background: linear-gradient(90deg, #8a3ebf 0%, #419965 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: saturate(0) brightness(0.55);
+  transition: filter 1s var(--ease-apple) 0.3s;
+}
+.reveal.visible .grad-text {
+  filter: saturate(1) brightness(1);
+}
+
+/* ─────────────────────────────── S1 HERO ── */
+#s1 {
+  background: var(--bg);
+  text-align: center;
+  gap: 0;
+  padding-top: 160px;
+}
+.hero-ambient {
+  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+}
+.ambient-orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.35;
+  animation: orbFloat 12s ease-in-out infinite;
+}
+.orb-1 { width: 700px; height: 500px; background: rgba(138,62,191,0.12); top: -10%; left: -15%; animation-delay: 0s; }
+.orb-2 { width: 500px; height: 400px; background: rgba(65,153,101,0.10); top: 10%; right: -10%; animation-delay: -4s; }
+.orb-3 { width: 400px; height: 300px; background: rgba(0,113,227,0.08); bottom: 5%; left: 25%; animation-delay: -8s; }
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  33% { transform: translate(30px,-25px) scale(1.04); }
+  66% { transform: translate(-20px,18px) scale(0.97); }
+}
+
+.logo-container {
+  margin-bottom: 48px;
+  position: relative; z-index: 1;
+}
+.logo-img {
+  height: 64px;
+  width: auto;
+  opacity: 0;
+  animation: logoReveal 1.6s var(--ease-apple) 0.2s forwards;
+}
+@keyframes logoReveal {
+  0% { opacity: 0; transform: scale(0.88) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.hero-eyebrow {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  position: relative; z-index: 1;
+}
+.hero-title {
+  font-size: clamp(40px, 6.5vw, 88px);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin-bottom: 20px;
+  position: relative; z-index: 1;
+  max-width: 900px;
+}
+.hero-sub {
+  font-size: clamp(16px, 1.8vw, 21px);
+  font-weight: 400;
+  color: var(--text-secondary);
+  max-width: 600px;
+  line-height: 1.65;
+  margin: 0 auto 56px;
+  position: relative; z-index: 1;
+  letter-spacing: -0.01em;
+}
+.hero-cta-group {
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+  position: relative; z-index: 1;
+  margin-bottom: 80px;
+}
+.btn-primary {
+  padding: 14px 28px;
+  background: var(--blue);
+  color: #fff;
+  border-radius: 99px;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  border: none;
+  transition: background 0.25s, transform 0.25s var(--ease-apple), box-shadow 0.25s;
+}
+.btn-primary:hover {
+  background: var(--blue-hover);
+  transform: scale(1.03);
+  box-shadow: 0 6px 24px rgba(0,113,227,0.3);
+}
+.btn-secondary {
+  padding: 14px 28px;
+  background: rgba(0,0,0,0.05);
+  color: var(--text);
+  border-radius: 99px;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  border: none;
+  transition: background 0.25s, transform 0.25s var(--ease-apple);
+}
+.btn-secondary:hover {
+  background: rgba(0,0,0,0.09);
+  transform: scale(1.03);
+}
+.hero-scroll {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  color: var(--text-secondary); font-size: 11px; letter-spacing: 0.06em;
+  text-transform: uppercase; animation: scrollPulse 2.5s ease-in-out infinite;
+  position: relative; z-index: 1;
+}
+.scroll-line {
+  width: 1px; height: 52px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.25), transparent);
+}
+@keyframes scrollPulse { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
+
+/* ─────────────────────────────── SECTION LABELS / TYPOGRAPHY ── */
+.section-eyebrow {
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--blue); margin-bottom: 16px;
+}
+.section-title {
+  font-size: clamp(32px, 4.5vw, 60px);
+  font-weight: 700; line-height: 1.06;
+  letter-spacing: -0.025em;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+.section-body {
+  font-size: 17px; color: var(--text-secondary);
+  line-height: 1.7; letter-spacing: -0.01em;
+}
+
+/* ─────────────────────────────── S2 PROBLEMA ── */
+#s2 { background: var(--bg-alt); }
+.s2-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; max-width: 1100px; width: 100%; align-items: center;
+}
+.pain-cards {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+}
+.pain-card {
+  padding: 28px 24px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.4s var(--ease-apple), box-shadow 0.4s;
+}
+.pain-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+.pain-icon { font-size: 24px; margin-bottom: 12px; }
+.pain-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; letter-spacing: -0.01em; }
+.pain-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+/* ─────────────────────────────── S3 VISIÓN ── */
+#s3 { background: var(--bg); text-align: center; }
+.vision-title {
+  font-size: clamp(36px, 5vw, 72px);
+  font-weight: 700; max-width: 820px;
+  line-height: 1.05; margin-bottom: 52px;
+  letter-spacing: -0.03em;
+}
+.vision-grid {
+  display: flex; flex-wrap: wrap;
+  justify-content: center; gap: 10px; max-width: 820px;
+}
+.vision-pill {
+  padding: 12px 22px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 999px; font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  transition: all 0.3s var(--ease-apple);
+}
+.vision-pill:hover {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(0,113,227,0.25);
+}
+.vision-quote {
+  margin-top: 64px;
+  font-size: clamp(20px,2.5vw,32px);
+  font-weight: 500;
+  color: var(--text-secondary);
+  max-width: 680px; line-height: 1.5;
+  letter-spacing: -0.02em;
+}
+.vision-quote::before { content: '"'; color: var(--blue); }
+.vision-quote::after { content: '"'; color: var(--blue); }
+
+/* ─────────────────────────────── S4 ACCORDION ── */
+#s4 { background: var(--bg-alt); text-align: center; padding: 100px 48px 120px; }
+.s4-wrapper { max-width: 1100px; width: 100%; }
+.s4-header { margin-bottom: 52px; }
+.s4-title {
+  font-size: clamp(32px,4.5vw,60px); font-weight: 700;
+  letter-spacing: -0.03em; margin-bottom: 14px;
+}
+.s4-sub {
+  font-size: 18px; color: var(--text-secondary);
+  max-width: 520px; margin: 0 auto;
+  line-height: 1.65; letter-spacing: -0.01em;
+}
+
+/* Big card container — Apple style */
+.s4-card {
+  display: grid; grid-template-columns: 1fr 1fr;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  text-align: left;
+  min-height: 520px;
+}
+
+/* Left accordion column */
+.s4-acc-col {
+  padding: 40px 36px;
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.acc-item { border-radius: var(--radius-sm); overflow: hidden; }
+.acc-trigger {
+  width: 100%; display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px;
+  background: transparent; border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer; text-align: left;
+  transition: background 0.25s var(--ease-apple), border-color 0.25s;
+  font-family: var(--font);
+}
+.acc-trigger:hover { background: var(--bg-alt); border-color: var(--border); }
+.acc-trigger.active { background: var(--bg-alt); border-color: var(--border); }
+
+.acc-circle {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: var(--text-secondary);
+  transition: all 0.3s var(--ease-apple);
+  background: var(--bg);
+}
+.acc-trigger.active .acc-circle {
+  background: var(--text); border-color: var(--text); color: #fff; font-size: 13px;
+}
+.acc-trigger-text { flex: 1; }
+.acc-label {
+  font-size: 15px; font-weight: 600; color: var(--text);
+  letter-spacing: -0.01em; display: block;
+}
+.acc-sublabel {
+  font-size: 12px; color: var(--text-secondary); font-weight: 400;
+  margin-top: 1px;
+}
+.acc-body {
+  overflow: hidden; max-height: 0;
+  transition: max-height 0.5s var(--ease-apple);
+}
+.acc-body.open { max-height: 120px; }
+.acc-desc {
+  padding: 0 18px 14px 62px;
+  font-size: 14px; color: var(--text-secondary);
+  line-height: 1.65; letter-spacing: -0.01em;
+}
+
+/* Right visual column */
+.s4-visual-col {
+  background: var(--bg-alt); position: relative; overflow: hidden;
+}
+.s4-panel {
+  position: absolute; inset: 0;
+  padding: 32px 28px;
+  display: flex; flex-direction: column;
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 0.45s var(--ease-apple), transform 0.45s var(--ease-apple);
+  pointer-events: none;
+}
+.s4-panel.active {
+  opacity: 1; transform: translateY(0); pointer-events: auto;
+}
+.s4-panel-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--blue); margin-bottom: 6px;
+}
+.s4-panel-title {
+  font-size: 22px; font-weight: 700; color: var(--text);
+  letter-spacing: -0.02em; margin-bottom: 20px;
+}
+
+/* Mini mockup inside panel */
+.s4-mini-mock {
+  flex: 1; background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  display: flex; flex-direction: column;
+}
+.s4-mini-bar {
+  height: 28px; background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 12px; gap: 5px;
+}
+.s4-mini-dot { width: 8px; height: 8px; border-radius: 50%; }
+.s4-mini-body { flex: 1; padding: 12px 16px; overflow: hidden; }
+
+/* Panel mini-table */
+.pm-row {
+  display: flex; gap: 8px; align-items: center;
+  padding: 7px 0; border-bottom: 1px solid rgba(0,0,0,0.04);
+  font-size: 12px; color: var(--text);
+}
+.pm-row:last-child { border-bottom: none; }
+.pm-cell-id { font-weight: 600; width: 56px; flex-shrink: 0; color: var(--text-secondary); font-size: 11px; }
+.pm-cell-name { flex: 1; font-weight: 500; }
+.pm-cell-price { font-weight: 700; font-size: 11px; width: 52px; text-align: right; flex-shrink: 0; }
+
+/* Panel mini-checklist */
+.pm-check {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 10px; border-radius: 8px; margin-bottom: 6px;
+  font-size: 12px; font-weight: 500;
+}
+.pm-check.ok { background: rgba(40,202,65,0.08); color: var(--text); }
+.pm-check.warn { background: rgba(255,165,0,0.08); color: var(--text); }
+.pm-check.err { background: rgba(255,59,48,0.06); color: var(--text); }
+.pm-check-badge { font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 99px; }
+.pm-check.ok .pm-check-badge { background: rgba(40,202,65,0.15); color: #1a8c2a; }
+.pm-check.warn .pm-check-badge { background: rgba(255,165,0,0.15); color: #b36200; }
+.pm-check.err .pm-check-badge { background: rgba(255,59,48,0.12); color: #cc2200; }
+
+/* Panel mini-cat grid */
+.pm-cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pm-cat-card {
+  background: var(--bg-alt); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+}
+.pm-cat-img { height: 52px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.pm-cat-img img { width: 100%; height: 100%; object-fit: cover; }
+.pm-cat-info { padding: 6px 8px; }
+.pm-cat-name { font-size: 11px; font-weight: 600; color: var(--text); }
+.pm-cat-price { font-size: 10px; color: var(--text-secondary); }
+
+/* Panel mini-chat */
+.pm-msg { max-width: 85%; margin-bottom: 8px; }
+.pm-msg-agent { align-self: flex-start; }
+.pm-msg-user { align-self: flex-end; margin-left: auto; }
+.pm-msg-bubble { padding: 8px 11px; border-radius: 12px; font-size: 11px; line-height: 1.4; }
+.pm-msg-agent .pm-msg-bubble { background: var(--bg-alt); border: 1px solid var(--border); color: var(--text); border-radius: 3px 12px 12px 12px; }
+.pm-msg-user .pm-msg-bubble { background: var(--blue); color: #fff; border-radius: 12px 3px 12px 12px; }
+.pm-handoff { background: rgba(0,113,227,0.06); border: 1px solid rgba(0,113,227,0.18); border-radius: 10px; padding: 8px 10px; margin-top: 6px; }
+.pm-handoff-title { font-size: 10px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+.pm-handoff-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary); }
+.pm-handoff-val { font-weight: 600; color: var(--text); }
+
+/* Panel mini-pipeline */
+.pm-pipeline { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.pm-pipe-col-head { font-size: 10px; font-weight: 700; color: var(--text-secondary); text-align: center; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+.pm-pipe-card { background: var(--bg-alt); border: 1px solid var(--border); border-radius: 8px; padding: 8px; font-size: 11px; margin-bottom: 5px; }
+.pm-pipe-name { font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.pm-pipe-tag { font-size: 10px; color: var(--text-secondary); }
+.pm-pipe-card.highlight { border-color: var(--blue); background: rgba(0,113,227,0.05); }
+
+/* Panel mini-ecom */
+.pm-ecom { display: flex; gap: 10px; }
+.pm-ecom-img { width: 80px; height: 90px; border-radius: 10px; overflow: hidden; flex-shrink: 0; border: 1px solid var(--border); background: var(--bg-alt); display: flex; align-items: center; justify-content: center; }
+.pm-ecom-img img { width: 100%; height: 100%; object-fit: cover; }
+.pm-ecom-info { flex: 1; }
+.pm-ecom-name { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.pm-ecom-meta { font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; }
+.pm-ecom-price { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; margin-bottom: 10px; }
+.pm-ecom-btn { padding: 9px 14px; background: var(--blue); border-radius: 99px; font-size: 12px; font-weight: 600; color: #fff; text-align: center; }
+
+/* Panel mini-experiencia */
+.pm-timeline { position: relative; padding-left: 16px; }
+.pm-timeline::before { content: ''; position: absolute; left: 4px; top: 4px; bottom: 4px; width: 1px; background: linear-gradient(to bottom, var(--blue), rgba(0,113,227,0.1)); }
+.pm-tl-step { position: relative; margin-bottom: 10px; }
+.pm-tl-step::before { content: ''; position: absolute; left: -14px; top: 4px; width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
+.pm-tl-label { font-size: 10px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.04em; }
+.pm-tl-desc { font-size: 11px; color: var(--text); font-weight: 500; }
+.pm-events-row { display: flex; gap: 6px; margin-top: 8px; }
+.pm-event { flex: 1; background: var(--bg-alt); border: 1px solid var(--border); border-radius: 10px; padding: 8px; text-align: center; }
+.pm-event-icon { font-size: 18px; margin-bottom: 3px; }
+.pm-event-name { font-size: 10px; font-weight: 600; color: var(--text); }
+.pm-event-sub { font-size: 9px; color: var(--text-secondary); }
+
+/* Responsive s4 */
+@media (max-width: 800px) {
+  .s4-card { grid-template-columns: 1fr; }
+  .s4-acc-col { border-right: none; border-bottom: 1px solid var(--border); }
+  .s4-visual-col { min-height: 380px; }
+  .s4-panel { position: relative; inset: auto; }
+  .s4-panel.active { display: flex; }
+  .s4-panel:not(.active) { display: none; }
+}
+
+/* ─────────────────────────────── MODULE SECTIONS ── */
+.module-wrapper {
+  width: 100%; display: flex; justify-content: center;
+  padding: 120px 48px;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.module-wrapper:nth-child(even) { background: var(--bg-alt); }
+.module-wrapper:nth-child(odd) { background: var(--bg); }
+
+.module-section {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+  max-width: 1200px; width: 100%;
+}
+.module-section.reverse { direction: rtl; }
+.module-section.reverse > * { direction: ltr; }
+
+.mod-number {
+  font-size: 96px; font-weight: 700;
+  color: rgba(0,0,0,0.04); line-height: 1;
+  margin-bottom: -16px; letter-spacing: -0.04em;
+}
+.mod-label {
+  font-size: 12px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--blue);
+  margin-bottom: 12px; font-weight: 600;
+}
+.mod-title {
+  font-size: clamp(28px,3.5vw,48px); font-weight: 700;
+  line-height: 1.1; margin-bottom: 16px;
+  letter-spacing: -0.025em;
+}
+.mod-phrase {
+  font-size: 19px; font-weight: 500;
+  color: var(--text-secondary); margin-bottom: 24px;
+  letter-spacing: -0.02em;
+}
+.mod-body {
+  font-size: 16px; color: var(--text-secondary);
+  line-height: 1.75; margin-bottom: 28px;
+  letter-spacing: -0.01em;
+}
+.mod-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.mod-tag {
+  padding: 7px 16px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 99px; font-size: 12px;
+  color: var(--text); letter-spacing: -0.01em;
+  font-weight: 500;
+  transition: all 0.3s var(--ease-apple);
+}
+.mod-tag:hover {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+
+/* ─────────────────────────────── MOCKUP WRAPPER ── */
+.mockup-wrapper {
+  position: relative; border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  background: var(--bg);
+  animation: cinematicFloat 16s ease-in-out infinite alternate;
+}
+@keyframes cinematicFloat {
+  0% { transform: perspective(1400px) rotateY(-4deg) rotateX(1.5deg) scale(0.98); }
+  100% { transform: perspective(1400px) rotateY(2deg) rotateX(-1deg) scale(1.02); }
+}
+.module-section.reverse .mockup-wrapper {
+  animation: cinematicFloatR 16s ease-in-out infinite alternate;
+}
+@keyframes cinematicFloatR {
+  0% { transform: perspective(1400px) rotateY(4deg) rotateX(1.5deg) scale(0.98); }
+  100% { transform: perspective(1400px) rotateY(-2deg) rotateX(-1deg) scale(1.02); }
+}
+
+/* ─────────────────────────────── MOCKUP BAR ── */
+.mockup-bar {
+  height: 38px;
+  background: var(--bg-alt);
+  display: flex; align-items: center;
+  padding: 0 16px; gap: 7px;
+  border-bottom: 1px solid var(--border);
+}
+.dot-r { width:11px;height:11px;border-radius:50%;background:#ff5f57; }
+.dot-y { width:11px;height:11px;border-radius:50%;background:#ffbd2e; }
+.dot-g { width:11px;height:11px;border-radius:50%;background:#28ca41; }
+
+/* ─────────────────────────────── MOCKUP: INVENTARIO ── */
+.inv-mockup { background: var(--bg); font-family: var(--font); }
+.inv-header {
+  padding: 16px 20px 8px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.inv-header-title {
+  font-size: 14px; font-weight: 600;
+  color: var(--text); letter-spacing: -0.01em;
+}
+.inv-btn {
+  padding: 7px 16px; background: var(--blue);
+  border-radius: 99px; font-size: 12px;
+  color: #fff; font-weight: 600;
+}
+.inv-filters { padding: 8px 20px 12px; display: flex; gap: 8px; }
+.inv-filter {
+  padding: 5px 14px; border-radius: 99px; font-size: 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary); font-weight: 500;
+}
+.inv-filter.active {
+  background: var(--text); border-color: var(--text); color: #fff;
+}
+.inv-table { width: 100%; border-collapse: collapse; }
+.inv-th {
+  padding: 8px 14px; text-align: left; font-size: 11px;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--text-secondary); font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+.inv-td {
+  padding: 11px 14px; font-size: 13px;
+  color: var(--text); border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.badge { padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+.badge-disponible { background: rgba(40,202,65,0.12); color: #1a8c2a; }
+.badge-apartado { background: rgba(255,165,0,0.12); color: #b36200; }
+.badge-vendido { background: rgba(255,59,48,0.10); color: #cc2200; }
+.badge-revision { background: rgba(0,113,227,0.10); color: var(--blue); }
+.inv-row:hover .inv-td { background: rgba(0,0,0,0.02); }
+
+/* ─────────────────────────────── MOCKUP: CRM ── */
+.crm-mockup { background: var(--bg); display: flex; height: 320px; font-family: var(--font); }
+.crm-sidebar {
+  width: 164px; flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  padding: 12px 0; overflow: hidden;
+  background: var(--bg-alt);
+}
+.crm-side-label {
+  padding: 4px 16px; font-size: 10px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text-secondary); margin-bottom: 6px; font-weight: 600;
+}
+.crm-lead {
+  padding: 10px 16px; transition: background 0.2s;
+  border-left: 2px solid transparent;
+}
+.crm-lead.active {
+  background: rgba(0,113,227,0.08); border-left-color: var(--blue);
+}
+.crm-lead:hover { background: rgba(0,0,0,0.04); }
+.crm-lead-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.crm-lead-tag { font-size: 11px; color: var(--text-secondary); }
+.crm-lead-int { display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+.int-alta { background: rgba(0,113,227,0.12); color: var(--blue); }
+.int-media { background: rgba(255,165,0,0.12); color: #b36200; }
+.int-baja { background: rgba(0,0,0,0.06); color: var(--text-secondary); }
+.crm-main { flex: 1; overflow: hidden; padding: 16px; }
+.crm-prospect-header {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; margin-bottom: 14px;
+}
+.crm-prospect-name { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+.crm-prospect-meta { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.crm-badge-alta {
+  padding: 4px 12px; background: rgba(0,113,227,0.10);
+  border: 1px solid rgba(0,113,227,0.2);
+  border-radius: 8px; font-size: 11px; font-weight: 600; color: var(--blue);
+}
+.crm-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.crm-info-item { background: var(--bg-alt); border-radius: var(--radius-sm); padding: 9px 12px; }
+.crm-info-label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 3px; font-weight: 600; }
+.crm-info-val { font-size: 12px; font-weight: 600; color: var(--text); }
+.crm-history-label { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 8px; font-weight: 600; }
+.crm-history-item { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
+.crm-hist-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); margin-top: 4px; flex-shrink: 0; }
+.crm-hist-text { font-size: 12px; color: var(--text); line-height: 1.5; }
+.crm-hist-date { font-size: 11px; color: var(--text-secondary); }
+
+/* ─────────────────────────────── MOCKUP: CATÁLOGO ── */
+.cat-mockup { background: var(--bg); font-family: var(--font); }
+.cat-nav {
+  padding: 12px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-alt);
+}
+.cat-nav-logo { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+.cat-nav-links { display: flex; gap: 16px; font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+.cat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; padding: 14px 20px; }
+.cat-card {
+  border-radius: var(--radius-md); overflow: hidden;
+  background: var(--bg-alt); border: 1px solid var(--border);
+  transition: all 0.35s var(--ease-apple);
+}
+.cat-card:hover {
+  border-color: var(--blue);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+.cat-img {
+  height: 80px; display: flex; align-items: center;
+  justify-content: center; font-size: 30px;
+  background: var(--bg); overflow: hidden;
+}
+.cat-img img { width: 100%; height: 100%; object-fit: cover; }
+.cat-info { padding: 10px 10px 12px; }
+.cat-piece-name { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.cat-piece-meta { font-size: 10px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 500; }
+.cat-piece-price { font-size: 13px; color: var(--text); font-weight: 700; letter-spacing: -0.01em; }
+.cat-btn {
+  width: 100%; padding: 6px;
+  text-align: center;
+  background: var(--blue);
+  border-radius: 99px; font-size: 11px;
+  color: #fff; margin-top: 8px;
+  font-weight: 600; letter-spacing: -0.01em;
+}
+
+/* ─────────────────────────────── MOCKUP: AGENTE IA ── */
+.agent-mockup { background: var(--bg); display: flex; flex-direction: column; font-family: var(--font); }
+.agent-header {
+  padding: 14px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+  background: var(--bg-alt);
+}
+.agent-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, #8a3ebf, #419965);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.agent-name { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+.agent-status { font-size: 11px; color: #1a8c2a; font-weight: 500; }
+.agent-messages {
+  flex: 1; padding: 16px;
+  display: flex; flex-direction: column; gap: 10px; overflow: hidden;
+}
+.msg { max-width: 82%; }
+.msg-agent { align-self: flex-start; }
+.msg-user { align-self: flex-end; }
+.msg-bubble {
+  padding: 10px 14px; border-radius: 16px;
+  font-size: 13px; line-height: 1.5; font-weight: 400;
+}
+.msg-agent .msg-bubble {
+  background: var(--bg-alt); border: 1px solid var(--border);
+  color: var(--text); border-radius: 4px 16px 16px 16px;
+}
+.msg-user .msg-bubble {
+  background: var(--blue);
+  color: #fff; border-radius: 16px 4px 16px 16px;
+}
+.msg-meta { font-size: 10px; color: var(--text-secondary); margin-top: 4px; padding: 0 4px; }
+.handoff-card {
+  margin: 8px 16px 16px;
+  background: rgba(0,113,227,0.05);
+  border: 1px solid rgba(0,113,227,0.2);
+  border-radius: var(--radius-md); padding: 14px;
+}
+.handoff-title {
+  font-size: 11px; color: var(--blue);
+  letter-spacing: 0.04em; text-transform: uppercase;
+  margin-bottom: 8px; font-weight: 700;
+}
+.handoff-row {
+  display: flex; justify-content: space-between;
+  font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;
+}
+.handoff-val { color: var(--text); font-weight: 600; }
+
+/* ─────────────────────────────── MOCKUP: ECOMMERCE ── */
+.ecom-mockup { background: var(--bg); font-family: var(--font); }
+
+/* Hero image — full width, tall */
+.ecom-hero-img {
+  width: 100%; height: 260px;
+  overflow: hidden; position: relative;
+  background: var(--bg-alt);
+}
+.ecom-hero-img img {
+  width: 100%; height: 100%; object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+.ecom-hero-badge {
+  position: absolute; bottom: 14px; left: 14px;
+  padding: 5px 14px; border-radius: 99px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  font-size: 12px; font-weight: 600;
+  color: #1a8c2a;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+}
+.ecom-hero-id {
+  position: absolute; bottom: 14px; right: 14px;
+  padding: 5px 14px; border-radius: 99px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  font-size: 11px; font-weight: 600;
+  color: var(--text-secondary);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+}
+
+/* Product info row */
+.ecom-product-info {
+  padding: 18px 20px 12px;
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ecom-piece-name {
+  font-size: 17px; font-weight: 700;
+  color: var(--text); letter-spacing: -0.02em; margin-bottom: 3px;
+}
+.ecom-piece-era {
+  font-size: 12px; color: var(--text-secondary); font-weight: 500;
+}
+.ecom-piece-price {
+  font-size: 22px; font-weight: 700;
+  color: var(--text); letter-spacing: -0.03em;
+  white-space: nowrap; padding-top: 2px;
+}
+
+/* Form section */
+.ecom-form-section {
+  padding: 14px 20px 18px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.ecom-form-field { display: flex; flex-direction: column; gap: 4px; }
+.ecom-form-field.full { grid-column: 1 / -1; }
+.ecom-form-label {
+  font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--text-secondary); font-weight: 600;
+}
+.ecom-input {
+  width: 100%; background: var(--bg-alt); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 9px 12px;
+  color: var(--text); font-size: 13px; font-family: inherit;
+  font-weight: 500;
+}
+
+/* CTA buttons */
+.ecom-actions {
+  padding: 0 20px 18px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.ecom-btn-primary {
+  padding: 15px; background: var(--blue);
+  border-radius: 99px; text-align: center;
+  font-size: 15px; font-weight: 600; color: #fff;
+  letter-spacing: -0.01em;
+  box-shadow: 0 4px 16px rgba(0,113,227,0.3);
+}
+.ecom-btn-sec {
+  padding: 13px; background: var(--bg-alt); border: 1px solid var(--border);
+  border-radius: 99px; text-align: center;
+  font-size: 14px; color: var(--text); font-weight: 600;
+}
+.ecom-policies {
+  font-size: 11px; color: var(--text-secondary);
+  text-align: center; line-height: 1.6; padding: 0 20px 4px;
+}
+
+/* ─────────────────────────────── CHECKLIST VALIDACIÓN ── */
+.checklist-row {
+  display: flex; align-items: center;
+  justify-content: space-between; padding: 12px 16px;
+  border-radius: var(--radius-sm); border: 1px solid;
+}
+.checklist-row.ok { background: rgba(40,202,65,0.06); border-color: rgba(40,202,65,0.2); }
+.checklist-row.warn { background: rgba(255,165,0,0.06); border-color: rgba(255,165,0,0.2); }
+.checklist-row.error { background: rgba(255,59,48,0.05); border-color: rgba(255,59,48,0.15); }
+.checklist-label { font-size: 13px; color: var(--text); font-weight: 500; }
+.checklist-badge { font-size: 11px; padding: 3px 12px; border-radius: 99px; font-weight: 600; }
+.badge-ok { background: rgba(40,202,65,0.15); color: #1a8c2a; }
+.badge-warn { background: rgba(255,165,0,0.15); color: #b36200; }
+.badge-err { background: rgba(255,59,48,0.12); color: #cc2200; }
+.checklist-alert {
+  margin-top: 8px; padding: 12px 16px;
+  background: rgba(255,165,0,0.08);
+  border: 1px solid rgba(255,165,0,0.25);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: #b36200; font-weight: 500;
+}
+
+/* ─────────────────────────────── EXP TIMELINE ── */
+.exp-content { padding: 20px; }
+.exp-timeline { position: relative; padding-left: 20px; }
+.exp-timeline::before {
+  content:''; position:absolute; left:6px; top:0; bottom:0; width:1px;
+  background: linear-gradient(to bottom, var(--blue), rgba(0,113,227,0.1));
+}
+.exp-step { position: relative; margin-bottom: 16px; }
+.exp-step::before {
+  content:''; position:absolute; left:-17px; top:5px;
+  width:8px; height:8px; border-radius:50%; background: var(--blue);
+  box-shadow: 0 0 8px rgba(0,113,227,0.35);
+}
+.exp-step-label { font-size: 11px; color: var(--blue); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 3px; font-weight: 700; }
+.exp-step-desc { font-size: 12px; color: var(--text); line-height: 1.5; font-weight: 500; }
+.exp-events { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+.exp-event {
+  background: var(--bg-alt); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 14px;
+  transition: all 0.3s var(--ease-apple);
+}
+.exp-event:hover { border-color: var(--blue); transform: translateY(-2px); }
+.exp-event-icon { font-size: 22px; margin-bottom: 6px; }
+.exp-event-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.exp-event-sub { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
+
+/* ─────────────────────────────── S12 IMPLEMENTACIÓN ── */
+#s12 { background: var(--bg-alt); text-align: center; }
+.impl-container { max-width: 1000px; width: 100%; }
+.impl-phases { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-top: 72px; }
+.phase-card {
+  padding: 40px 32px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-xl); text-align: left;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.4s var(--ease-apple); position: relative; overflow: hidden;
+}
+.phase-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(0,113,227,0.04), transparent 60%);
+  opacity: 0; transition: opacity 0.4s;
+}
+.phase-card:hover::before { opacity: 1; }
+.phase-card:hover { border-color: var(--blue); transform: translateY(-8px); box-shadow: var(--shadow-md); }
+.phase-num { font-size: 72px; font-weight: 800; color: rgba(0,0,0,0.05); line-height: 1; margin-bottom: 12px; letter-spacing: -0.04em; }
+.phase-name { font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--blue); margin-bottom: 18px; font-weight: 700; }
+.phase-items { list-style: none; }
+.phase-item {
+  font-size: 14px; color: var(--text); padding: 6px 0;
+  border-bottom: 1px solid var(--border); font-weight: 500;
+}
+.phase-item::before { content: '→ '; color: var(--blue); font-weight: 600; }
+
+/* ─────────────────────────────── S13 PROPUESTA ── */
+#s13 { background: var(--bg); text-align: center; }
+.price-card {
+  max-width: 700px; width: 100%;
+  padding: 68px 60px;
+  background: var(--bg);
+  backdrop-filter: blur(40px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  position: relative; overflow: hidden;
+}
+.price-card::before {
+  content: ''; position: absolute; top: 0; left: 15%; right: 15%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--blue), transparent);
+}
+.price-label {
+  font-size: 12px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--blue);
+  margin-bottom: 14px; font-weight: 700;
+}
+.price-package {
+  font-size: clamp(22px,3vw,34px); font-weight: 700;
+  color: var(--text); margin-bottom: 52px;
+  letter-spacing: -0.02em;
+}
+.price-amount {
+  font-size: clamp(52px,7vw,92px); font-weight: 700;
+  color: var(--text); line-height: 1; margin-bottom: 8px;
+  letter-spacing: -0.04em;
+}
+.price-currency {
+  font-size: 22px; color: var(--text-secondary);
+  vertical-align: top; margin-top: 18px;
+  display: inline-block; margin-right: 4px; font-weight: 500;
+}
+.price-unit { font-size: 16px; color: var(--text-secondary); margin-bottom: 52px; font-weight: 400; }
+.price-includes { text-align: left; }
+.price-inc-label {
+  font-size: 11px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-secondary);
+  margin-bottom: 20px; font-weight: 700;
+}
+.price-inc-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 11px 0; border-bottom: 1px solid var(--border);
+  font-size: 15px; color: var(--text); font-weight: 500;
+}
+.price-check { color: var(--blue); font-size: 16px; font-weight: 700; }
+.price-tagline {
+  margin-top: 44px; font-size: 18px; font-weight: 500;
+  color: var(--text-secondary); letter-spacing: -0.01em;
+}
+
+/* ─────────────────────────────── S14 VALOR ── */
+#s14 { background: var(--bg-alt); text-align: center; }
+.valor-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 16px; max-width: 1000px; width: 100%; margin-top: 64px;
+}
+.valor-card {
+  padding: 32px 24px; border-radius: var(--radius-lg);
+  background: var(--bg); border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.4s var(--ease-apple);
+}
+.valor-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--blue);
+}
+.valor-icon { font-size: 30px; margin-bottom: 14px; }
+.valor-text { font-size: 14px; color: var(--text); line-height: 1.6; font-weight: 500; letter-spacing: -0.01em; }
+
+/* ─────────────────────────────── S15 CIERRE ── */
+#s15 { background: var(--bg); text-align: center; }
+.cierre-title {
+  font-size: clamp(34px,5vw,76px); font-weight: 700;
+  line-height: 1.06; max-width: 800px; margin-bottom: 32px;
+  letter-spacing: -0.03em;
+}
+.cierre-body {
+  font-size: 19px; color: var(--text-secondary);
+  max-width: 560px; line-height: 1.7; margin-bottom: 52px;
+  font-weight: 400; letter-spacing: -0.01em;
+}
+.cierre-pillars {
+  display: flex; flex-wrap: wrap;
+  justify-content: center; gap: 10px; margin-bottom: 72px;
+}
+.cierre-pillar {
+  padding: 13px 26px;
+  background: var(--bg-alt); border: 1px solid var(--border);
+  border-radius: 99px; font-size: 14px;
+  font-weight: 600; color: var(--text);
+  transition: all 0.3s var(--ease-apple);
+  letter-spacing: -0.01em;
+}
+.cierre-pillar:hover {
+  background: var(--blue); border-color: var(--blue);
+  color: #fff; transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0,113,227,0.25);
+}
+.cierre-final {
+  font-size: clamp(16px,2vw,21px); font-weight: 400;
+  color: var(--text-secondary); max-width: 620px; line-height: 1.8;
+  letter-spacing: -0.01em;
+}
+.cierre-cta {
+  margin-top: 56px; display: flex;
+  gap: 12px; justify-content: center; flex-wrap: wrap;
+}
+
+/* ─────────────────────────────── DIVIDER ── */
+.section-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 80px;
+}
+
+/* ─────────────────────────────── REVEAL STAGGER ON GRID ── */
+@keyframes materializeLight {
+  0% { opacity: 0; filter: blur(6px); transform: translateY(12px); }
+  100% { opacity: 1; filter: blur(0); transform: translateY(0); }
+}
+.mockup-wrapper.visible .inv-row {
+  opacity: 0;
+  animation: materializeLight 0.7s var(--ease-apple) forwards;
+}
+.mockup-wrapper.visible .inv-row:nth-child(1) { animation-delay: 0.25s; }
+.mockup-wrapper.visible .inv-row:nth-child(2) { animation-delay: 0.4s; }
+.mockup-wrapper.visible .inv-row:nth-child(3) { animation-delay: 0.55s; }
+.mockup-wrapper.visible .inv-row:nth-child(4) { animation-delay: 0.7s; }
+.mockup-wrapper.visible .inv-row:nth-child(5) { animation-delay: 0.85s; }
+.mockup-wrapper.visible .inv-row:nth-child(6) { animation-delay: 1.0s; }
+
+.mockup-wrapper.visible .crm-lead {
+  opacity: 0;
+  animation: materializeLight 0.6s var(--ease-apple) forwards;
+}
+.mockup-wrapper.visible .crm-lead:nth-child(1) { animation-delay: 0.2s; }
+.mockup-wrapper.visible .crm-lead:nth-child(2) { animation-delay: 0.35s; }
+.mockup-wrapper.visible .crm-lead:nth-child(3) { animation-delay: 0.5s; }
+.mockup-wrapper.visible .crm-lead:nth-child(4) { animation-delay: 0.65s; }
+
+/* ─────────────────────────────── TYPEWRITER IA ── */
+@keyframes typing { from { width: 0; } to { width: 100%; } }
+@keyframes blinkCursor { 50% { border-color: transparent; } }
+
+.mockup-wrapper.visible .msg-bubble {
+  overflow: hidden; white-space: nowrap;
+  border-right: 2px solid var(--blue);
+  width: 0;
+  animation: typing 1.4s steps(38, end) forwards, blinkCursor 0.7s step-end infinite;
+}
+.mockup-wrapper.visible .msg-agent:nth-child(1) .msg-bubble { animation-delay: 0.4s; }
+.mockup-wrapper.visible .msg-user:nth-child(2) .msg-bubble { animation-delay: 2.2s; }
+.mockup-wrapper.visible .msg-agent:nth-child(3) .msg-bubble { animation-delay: 4.0s; }
+.mockup-wrapper.visible .msg-user:nth-child(4) .msg-bubble { animation-delay: 5.8s; }
+
+.msg-meta { opacity: 0; transition: opacity 0.4s; }
+.mockup-wrapper.visible .msg-agent:nth-child(1) .msg-meta { transition-delay: 1.8s; opacity: 1; }
+.mockup-wrapper.visible .msg-user:nth-child(2) .msg-meta { transition-delay: 3.6s; opacity: 1; }
+.mockup-wrapper.visible .msg-agent:nth-child(3) .msg-meta { transition-delay: 5.4s; opacity: 1; }
+.mockup-wrapper.visible .msg-user:nth-child(4) .msg-meta { transition-delay: 7.2s; opacity: 1; }
+
+/* ─────────────────────────────── RESPONSIVE ── */
+@media (max-width: 960px) {
+  .s2-grid, .module-section, .impl-phases, .valor-grid, .ecom-content, .crm-mockup {
+    grid-template-columns: 1fr;
+  }
+  .module-section.reverse { direction: ltr; }
+  .mockup-wrapper { transform: none !important; animation: none !important; }
+  nav { padding: 0 24px; }
+  section, .module-wrapper { padding: 80px 24px; }
+  .flow-steps { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+  .price-card { padding: 44px 32px; }
+  .crm-mockup { height: auto; flex-direction: column; }
+  .crm-sidebar { width: 100%; display: flex; overflow-x: auto; gap: 0; border-right: none; border-bottom: 1px solid var(--border); }
+}
+@media (max-width: 600px) {
+  .hero-title { font-size: 36px; }
+  .pain-cards { grid-template-columns: 1fr; }
+  .cat-grid { grid-template-columns: 1fr 1fr; }
+  .valor-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<button id="auto-play-btn" class="play-btn">▶ Reproducir Demo</button>
+
+<nav id="nav">
+  <div class="nav-logo">
+    <img src="images/logo-domus.png" alt="Domus">
+  </div>
+  <div class="nav-dots" id="navDots"></div>
+</nav>
+
+<!-- ══════════════════════════ S1 · HERO ══════════════════════════ -->
+<section id="s1" class="auto-section">
+  <div class="hero-ambient">
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+  </div>
+
+  <div class="logo-container">
+    <img src="images/logo-domus.png" class="logo-img" alt="Domus Antigüedades">
+  </div>
+
+  <div class="reveal">
+    <p class="hero-eyebrow">Propuesta de Sistema · 2026</p>
+  </div>
+  <div class="reveal reveal-delay-1">
+    <h1 class="hero-title">Sistema Comercial,<br>Operativo <em class="grad-text">y de Experiencia</em></h1>
+  </div>
+  <div class="reveal reveal-delay-2">
+    <p class="hero-sub">Un sistema diseñado para reducir errores, centralizar información, profesionalizar la venta e integrar un catálogo digital premium sin perder el trato humano.</p>
+  </div>
+  <div class="reveal reveal-delay-3">
+    <div class="hero-cta-group">
+      <button class="btn-primary" onclick="document.getElementById('s4').scrollIntoView({behavior:'smooth'})">Ver la solución</button>
+      <button class="btn-secondary" onclick="document.getElementById('s13').scrollIntoView({behavior:'smooth'})">Ver propuesta</button>
+    </div>
+  </div>
+  <div class="reveal reveal-delay-4">
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ S2 · PROBLEMA ══════════════════════════ -->
+<section id="s2" class="auto-section">
+  <div class="s2-grid">
+    <div class="s2-left">
+      <p class="section-eyebrow reveal">El problema</p>
+      <h2 class="section-title reveal reveal-delay-1">El valor de Domus<br><strong class="grad-text">ya existe.</strong><br>El problema está en<br>la operación.</h2>
+      <p class="section-body reveal reveal-delay-2">Domus tiene marca, producto, estética y una experiencia valiosa. Sin embargo, la base comercial todavía depende demasiado de procesos manuales.</p>
+    </div>
+    <div class="pain-cards">
+      <div class="pain-card reveal reveal-delay-1">
+        <div class="pain-icon">📋</div>
+        <div class="pain-title">Información dispersa</div>
+        <div class="pain-desc">Precios, descripciones y disponibilidad corren riesgo de error.</div>
+      </div>
+      <div class="pain-card reveal reveal-delay-2">
+        <div class="pain-icon">💬</div>
+        <div class="pain-title">Seguimiento manual</div>
+        <div class="pain-desc">La atención depende de mensajes y memoria operativa.</div>
+      </div>
+      <div class="pain-card reveal reveal-delay-3">
+        <div class="pain-icon">⚡</div>
+        <div class="pain-title">Sin base única</div>
+        <div class="pain-desc">No existe una sola verdad que alimente catálogo y seguimiento.</div>
+      </div>
+      <div class="pain-card reveal reveal-delay-4">
+        <div class="pain-icon">🏗️</div>
+        <div class="pain-title">Sin estructura</div>
+        <div class="pain-desc">Ni CDMX, ni eventos, ni escala pueden crecer sobre desorden.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ S3 · VISIÓN ══════════════════════════ -->
+<section id="s3" class="auto-section">
+  <p class="section-eyebrow reveal">La visión</p>
+  <h2 class="vision-title reveal reveal-delay-1">Lo que Domus<br>quiere <em class="grad-text">construir</em></h2>
+  <div class="vision-grid reveal reveal-delay-2">
+    <div class="vision-pill">Referencia nacional</div>
+    <div class="vision-pill">Expansión a CDMX</div>
+    <div class="vision-pill">Catálogo digital serio</div>
+    <div class="vision-pill">Atención humana con orden</div>
+    <div class="vision-pill">Catas · Campañas · Activaciones</div>
+    <div class="vision-pill">Proceso premium de inicio a entrega</div>
+  </div>
+  <p class="vision-quote reveal reveal-delay-3">No se trata solo de vender objetos. Se trata de construir una experiencia memorable y escalable.</p>
+</section>
+
+<!-- ══════════════════════════ S4 · ACCORDION APPLE STYLE ══════════════════════════ -->
+<section id="s4" class="auto-section">
+  <div class="s4-wrapper reveal">
+
+    <div class="s4-header">
+      <p class="section-eyebrow">La solución</p>
+      <h2 class="s4-title">Sistema <em class="grad-text">Domus</em></h2>
+      <p class="s4-sub">Una estructura integral que conecta inventario, validación, catálogo, IA y atención humana en una sola lógica de operación.</p>
+    </div>
+
+    <div class="s4-card">
+
+      <!-- ── Columna izquierda: Accordion ── -->
+      <div class="s4-acc-col">
+
+        <div class="acc-item">
+          <button class="acc-trigger active" data-panel="p1">
+            <div class="acc-circle">🗄️</div>
+            <div class="acc-trigger-text">
+              <span class="acc-label">Inventario Maestro</span>
+              <span class="acc-sublabel">Núcleo central de operación</span>
+            </div>
+          </button>
+          <div class="acc-body open">
+            <p class="acc-desc">La base central donde vive la verdad de cada pieza. Código único, fotografías, estatus en tiempo real, precio, ubicación e historial completo de cada objeto.</p>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-trigger" data-panel="p2">
+            <div class="acc-circle">+</div>
+            <div class="acc-trigger-text">
+              <span class="acc-label">Control y Validación</span>
+              <span class="acc-sublabel">Candados inteligentes antes de publicar</span>
+            </div>
+          </button>
+          <div class="acc-body">
+            <p class="acc-desc">Semáforo de revisión que impide publicar piezas incompletas. Alertas automáticas, historial de cambios y doble validación antes de que cualquier pieza llegue al catálogo.</p>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-trigger" data-panel="p3">
+            <div class="acc-circle">+</div>
+            <div class="acc-trigger-text">
+              <span class="acc-label">Catálogo Digital</span>
+              <span class="acc-sublabel">El escaparate nacional de Domus</span>
+            </div>
+          </button>
+          <div class="acc-body">
+            <p class="acc-desc">Grid premium con fichas detalladas, filtros avanzados, buscador y flujo de apartado directo. Canal serio de conversión con presencia nacional estructurada.</p>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-trigger" data-panel="p4">
+            <div class="acc-circle">+</div>
+            <div class="acc-trigger-text">
+              <span class="acc-label">Agente de IA</span>
+              <span class="acc-sublabel">Primera línea de atención</span>
+            </div>
+          </button>
+          <div class="acc-body">
+            <p class="acc-desc">Responde rápido, califica la intención del cliente y entrega conversaciones más claras al equipo humano. No reemplaza la confianza — la prepara y acelera.</p>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-trigger" data-panel="p5">
+            <div class="acc-circle">+</div>
+            <div class="acc-trigger-text">
+              <span class="acc-label">Seguimiento CRM</span>
+              <span class="acc-sublabel">Memoria y orden comercial</span>
+            </div>
+          </button>
+          <div class="acc-body">
+            <p class="acc-desc">Pipeline con historial por prospecto, nivel de intención, recordatorios automáticos y responsable asignado. La atención no depende de acordarse — depende del sistema.</p>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-trigger" data-panel="p6">
+            <div class="acc-circle">+</div>
+            <div class="acc-trigger-text">
+              <span class="acc-label">Ecommerce Asistido</span>
+              <span class="acc-sublabel">Conversión premium, no genérica</span>
+            </div>
+          </button>
+          <div class="acc-body">
+            <p class="acc-desc">Apartado con anticipo, validación humana y políticas claras. Pensado para piezas únicas sin convertir a Domus en una tienda genérica.</p>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-trigger" data-panel="p7">
+            <div class="acc-circle">+</div>
+            <div class="acc-trigger-text">
+              <span class="acc-label">Experiencia y Escala</span>
+              <span class="acc-sublabel">Postventa, eventos y CDMX</span>
+            </div>
+          </button>
+          <div class="acc-body">
+            <p class="acc-desc">Postventa estructurado, campañas VIP, catas y activaciones. La base para crecer a CDMX con operación sólida, no con improvisación.</p>
+          </div>
+        </div>
+
+      </div><!-- /accordion -->
+
+      <!-- ── Columna derecha: Visuales dinámicos ── -->
+      <div class="s4-visual-col">
+
+        <!-- P1 · Inventario -->
+        <div class="s4-panel active" id="p1">
+          <div class="s4-panel-eyebrow">Módulo 01</div>
+          <div class="s4-panel-title">Inventario Maestro</div>
+          <div class="s4-mini-mock">
+            <div class="s4-mini-bar">
+              <div class="s4-mini-dot" style="background:#ff5f57"></div>
+              <div class="s4-mini-dot" style="background:#ffbd2e"></div>
+              <div class="s4-mini-dot" style="background:#28ca41"></div>
+            </div>
+            <div class="s4-mini-body">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <span style="font-size:12px;font-weight:700;color:var(--text);">Inventario Domus · 2026</span>
+                <span style="font-size:11px;font-weight:600;background:var(--blue);color:#fff;padding:4px 10px;border-radius:99px;">+ Nueva</span>
+              </div>
+              <div class="pm-row"><span class="pm-cell-id">DOM-041</span><span class="pm-cell-name">Cómoda Luis XV</span><span class="badge badge-disponible" style="font-size:9px;">Disponible</span><span class="pm-cell-price">$48,000</span></div>
+              <div class="pm-row"><span class="pm-cell-id">DOM-039</span><span class="pm-cell-name">Espejo Dorado S.XIX</span><span class="badge badge-apartado" style="font-size:9px;">Apartado</span><span class="pm-cell-price">$22,500</span></div>
+              <div class="pm-row"><span class="pm-cell-id">DOM-037</span><span class="pm-cell-name">Reloj de Péndulo</span><span class="badge badge-revision" style="font-size:9px;">Revisión</span><span class="pm-cell-price">$36,000</span></div>
+              <div class="pm-row"><span class="pm-cell-id">DOM-035</span><span class="pm-cell-name">Vitrina Art Nouveau</span><span class="badge badge-disponible" style="font-size:9px;">Disponible</span><span class="pm-cell-price">$67,000</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- P2 · Validación -->
+        <div class="s4-panel" id="p2">
+          <div class="s4-panel-eyebrow">Módulo 02</div>
+          <div class="s4-panel-title">Control y Validación</div>
+          <div class="s4-mini-mock">
+            <div class="s4-mini-bar">
+              <div class="s4-mini-dot" style="background:#ff5f57"></div>
+              <div class="s4-mini-dot" style="background:#ffbd2e"></div>
+              <div class="s4-mini-dot" style="background:#28ca41"></div>
+            </div>
+            <div class="s4-mini-body">
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px;">Revisión · DOM-041</div>
+              <div class="pm-check ok"><span>✓ Fotografías cargadas</span><span class="pm-check-badge">OK</span></div>
+              <div class="pm-check ok"><span>✓ Precio confirmado</span><span class="pm-check-badge">OK</span></div>
+              <div class="pm-check warn"><span>⚠ Medidas incompletas</span><span class="pm-check-badge">Revisar</span></div>
+              <div class="pm-check err"><span>✗ Ubicación en tienda</span><span class="pm-check-badge">Falta</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- P3 · Catálogo -->
+        <div class="s4-panel" id="p3">
+          <div class="s4-panel-eyebrow">Módulo 03</div>
+          <div class="s4-panel-title">Catálogo Digital</div>
+          <div class="s4-mini-mock">
+            <div class="s4-mini-bar">
+              <div class="s4-mini-dot" style="background:#ff5f57"></div>
+              <div class="s4-mini-dot" style="background:#ffbd2e"></div>
+              <div class="s4-mini-dot" style="background:#28ca41"></div>
+            </div>
+            <div class="s4-mini-body">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <span style="font-size:12px;font-weight:700;color:var(--text);">DOMUS · Antigüedades</span>
+                <span style="font-size:11px;color:var(--text-secondary);">Todo · Muebles · Arte</span>
+              </div>
+              <div class="pm-cat-grid">
+                <div class="pm-cat-card"><div class="pm-cat-img"><img src="images/product-1.png" alt=""></div><div class="pm-cat-info"><div class="pm-cat-name">Espejo S.XIX</div><div class="pm-cat-price">$22,500</div></div></div>
+                <div class="pm-cat-card"><div class="pm-cat-img"><img src="images/product-2.png" alt=""></div><div class="pm-cat-info"><div class="pm-cat-name">Cómoda Luis XV</div><div class="pm-cat-price">$48,000</div></div></div>
+                <div class="pm-cat-card"><div class="pm-cat-img"><img src="images/product-3.png" alt=""></div><div class="pm-cat-info"><div class="pm-cat-name">Reloj Péndulo</div><div class="pm-cat-price">$36,000</div></div></div>
+                <div class="pm-cat-card"><div class="pm-cat-img"><img src="images/product-4.png" alt=""></div><div class="pm-cat-info"><div class="pm-cat-name">Vitrina Art Nouveau</div><div class="pm-cat-price">$67,000</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- P4 · Agente IA -->
+        <div class="s4-panel" id="p4">
+          <div class="s4-panel-eyebrow">Módulo 04</div>
+          <div class="s4-panel-title">Agente de IA</div>
+          <div class="s4-mini-mock">
+            <div class="s4-mini-bar">
+              <div class="s4-mini-dot" style="background:#ff5f57"></div>
+              <div class="s4-mini-dot" style="background:#ffbd2e"></div>
+              <div class="s4-mini-dot" style="background:#28ca41"></div>
+            </div>
+            <div class="s4-mini-body" style="display:flex;flex-direction:column;gap:0;">
+              <div class="pm-msg pm-msg-agent"><div class="pm-msg-bubble">¡Bienvenido! ¿Busca alguna pieza en especial?</div></div>
+              <div class="pm-msg pm-msg-user"><div class="pm-msg-bubble">Muebles siglo XIX, soy de MTY.</div></div>
+              <div class="pm-msg pm-msg-agent"><div class="pm-msg-bubble">Tenemos 3 piezas disponibles. ¿Le interesa verlas?</div></div>
+              <div class="pm-handoff">
+                <div class="pm-handoff-title">→ Transferir a asesor</div>
+                <div class="pm-handoff-row"><span>Interés</span><span class="pm-handoff-val">Muebles S.XIX</span></div>
+                <div class="pm-handoff-row"><span>Intención</span><span class="pm-handoff-val" style="color:var(--blue)">Alta · 2 semanas</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- P5 · CRM -->
+        <div class="s4-panel" id="p5">
+          <div class="s4-panel-eyebrow">Módulo 05</div>
+          <div class="s4-panel-title">Seguimiento CRM</div>
+          <div class="s4-mini-mock">
+            <div class="s4-mini-bar">
+              <div class="s4-mini-dot" style="background:#ff5f57"></div>
+              <div class="s4-mini-dot" style="background:#ffbd2e"></div>
+              <div class="s4-mini-dot" style="background:#28ca41"></div>
+            </div>
+            <div class="s4-mini-body">
+              <div class="pm-pipeline">
+                <div>
+                  <div class="pm-pipe-col-head">Nuevo</div>
+                  <div class="pm-pipe-card highlight"><div class="pm-pipe-name">Roberto V.</div><div class="pm-pipe-tag">Muebles · Alta</div></div>
+                  <div class="pm-pipe-card"><div class="pm-pipe-name">Ana R.</div><div class="pm-pipe-tag">Relojes · Baja</div></div>
+                </div>
+                <div>
+                  <div class="pm-pipe-col-head">Seguimiento</div>
+                  <div class="pm-pipe-card"><div class="pm-pipe-name">Laura M.</div><div class="pm-pipe-tag">Decoración · Media</div></div>
+                </div>
+                <div>
+                  <div class="pm-pipe-col-head">Cerrado</div>
+                  <div class="pm-pipe-card"><div class="pm-pipe-name">Carlos P.</div><div class="pm-pipe-tag">Arte · Vendido ✓</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- P6 · Ecommerce -->
+        <div class="s4-panel" id="p6">
+          <div class="s4-panel-eyebrow">Módulo 06</div>
+          <div class="s4-panel-title">Ecommerce Asistido</div>
+          <div class="s4-mini-mock">
+            <div class="s4-mini-bar">
+              <div class="s4-mini-dot" style="background:#ff5f57"></div>
+              <div class="s4-mini-dot" style="background:#ffbd2e"></div>
+              <div class="s4-mini-dot" style="background:#28ca41"></div>
+            </div>
+            <div class="s4-mini-body">
+              <div class="pm-ecom">
+                <div class="pm-ecom-img"><img src="images/product-2.png" alt="Cómoda"></div>
+                <div class="pm-ecom-info">
+                  <div class="pm-ecom-name">Cómoda Luis XV</div>
+                  <div class="pm-ecom-meta">Francia · Siglo XVIII</div>
+                  <div class="pm-ecom-price">$48,000 MXN</div>
+                  <div class="pm-ecom-btn">Apartar · 20% anticipo</div>
+                </div>
+              </div>
+              <div style="margin-top:10px;padding:8px 10px;background:var(--bg-alt);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text-secondary);">
+                ✓ Validación humana · Anticipo no reembolsable · Reserva 7 días
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- P7 · Experiencia -->
+        <div class="s4-panel" id="p7">
+          <div class="s4-panel-eyebrow">Módulo 07</div>
+          <div class="s4-panel-title">Experiencia y Escala</div>
+          <div class="s4-mini-mock">
+            <div class="s4-mini-bar">
+              <div class="s4-mini-dot" style="background:#ff5f57"></div>
+              <div class="s4-mini-dot" style="background:#ffbd2e"></div>
+              <div class="s4-mini-dot" style="background:#28ca41"></div>
+            </div>
+            <div class="s4-mini-body">
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px;">Entrega · DOM-041</div>
+              <div class="pm-timeline">
+                <div class="pm-tl-step"><div class="pm-tl-label">Confirmación</div><div class="pm-tl-desc">Notificación automática al cerrar venta.</div></div>
+                <div class="pm-tl-step"><div class="pm-tl-label">Coordinación</div><div class="pm-tl-desc">El asesor confirma entrega o visita.</div></div>
+                <div class="pm-tl-step"><div class="pm-tl-label">Postventa</div><div class="pm-tl-desc">Mensaje con cuidados de la pieza.</div></div>
+              </div>
+              <div class="pm-events-row">
+                <div class="pm-event"><div class="pm-event-icon">🍷</div><div class="pm-event-name">Cata VIP</div><div class="pm-event-sub">Mayo 2026</div></div>
+                <div class="pm-event"><div class="pm-event-icon">🏙️</div><div class="pm-event-name">CDMX</div><div class="pm-event-sub">2027</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /visual col -->
+    </div><!-- /s4-card -->
+  </div><!-- /s4-wrapper -->
+</section>
+
+<!-- ══════════════════════════ S5 · MÓDULO 1 · INVENTARIO ══════════════════════════ -->
+<div class="module-wrapper auto-section" id="s5">
+  <div class="module-section">
+    <div class="mod-left">
+      <div class="mod-number reveal">01</div>
+      <p class="mod-label reveal">Módulo 1</p>
+      <h2 class="mod-title reveal reveal-delay-1">Núcleo Maestro<br>de <em class="grad-text">Inventario</em></h2>
+      <p class="mod-phrase reveal reveal-delay-2">Una sola verdad para toda la operación.</p>
+      <p class="mod-body reveal reveal-delay-3">La base central donde vive la verdad de cada pieza. Si la verdad del inventario falla, todo falla: catálogo, seguimiento, confianza y venta.</p>
+      <div class="mod-tags reveal reveal-delay-4">
+        <span class="mod-tag">Código único</span><span class="mod-tag">Fotografías</span><span class="mod-tag">Estatus</span>
+        <span class="mod-tag">Precio</span><span class="mod-tag">Ubicación</span><span class="mod-tag">Historial</span>
+      </div>
+    </div>
+    <div class="mockup-wrapper reveal reveal-delay-2">
+      <div class="inv-mockup">
+        <div class="mockup-bar"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div></div>
+        <div class="inv-header">
+          <div class="inv-header-title">Inventario Domus · 2026</div>
+          <div class="inv-btn">+ Nueva pieza</div>
+        </div>
+        <div class="inv-filters">
+          <div class="inv-filter active">Todas</div>
+          <div class="inv-filter">Disponibles</div>
+          <div class="inv-filter">Apartadas</div>
+          <div class="inv-filter">Revisión</div>
+        </div>
+        <table class="inv-table">
+          <thead><tr>
+            <th class="inv-th">ID</th><th class="inv-th">Pieza</th><th class="inv-th">Categoría</th>
+            <th class="inv-th">Precio</th><th class="inv-th">Estatus</th>
+          </tr></thead>
+          <tbody>
+            <tr class="inv-row"><td class="inv-td">DOM-041</td><td class="inv-td">Cómoda Luis XV</td><td class="inv-td">Mueble</td><td class="inv-td">$48,000</td><td class="inv-td"><span class="badge badge-disponible">Disponible</span></td></tr>
+            <tr class="inv-row"><td class="inv-td">DOM-039</td><td class="inv-td">Espejo Dorado S. XIX</td><td class="inv-td">Decoración</td><td class="inv-td">$22,500</td><td class="inv-td"><span class="badge badge-apartado">Apartado</span></td></tr>
+            <tr class="inv-row"><td class="inv-td">DOM-037</td><td class="inv-td">Reloj de Péndulo</td><td class="inv-td">Relojes</td><td class="inv-td">$36,000</td><td class="inv-td"><span class="badge badge-revision">Revisión</span></td></tr>
+            <tr class="inv-row"><td class="inv-td">DOM-035</td><td class="inv-td">Vitrina Art Nouveau</td><td class="inv-td">Mueble</td><td class="inv-td">$67,000</td><td class="inv-td"><span class="badge badge-disponible">Disponible</span></td></tr>
+            <tr class="inv-row"><td class="inv-td">DOM-033</td><td class="inv-td">Lámpara Tiffany</td><td class="inv-td">Iluminación</td><td class="inv-td">$19,800</td><td class="inv-td"><span class="badge badge-vendido">Vendido</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ S6 · MÓDULO 2 · VALIDACIÓN ══════════════════════════ -->
+<div class="module-wrapper auto-section" id="s6">
+  <div class="module-section reverse">
+    <div class="mod-left">
+      <div class="mod-number reveal">02</div>
+      <p class="mod-label reveal">Módulo 2</p>
+      <h2 class="mod-title reveal reveal-delay-1">Control Operativo<br>y <em class="grad-text">Validación</em></h2>
+      <p class="mod-phrase reveal reveal-delay-2">Lo humano permanece. El error disminuye.</p>
+      <p class="mod-body reveal reveal-delay-3">La capa que protege a Domus de errores humanos antes de publicar o vender. No estamos quitando a las personas — estamos poniendo candados inteligentes.</p>
+      <div class="mod-tags reveal reveal-delay-4">
+        <span class="mod-tag">Checklist pre-publicación</span><span class="mod-tag">Semáforo</span>
+        <span class="mod-tag">Alertas</span><span class="mod-tag">Historial de cambios</span>
+      </div>
+    </div>
+    <div class="mockup-wrapper reveal reveal-delay-2">
+      <div class="inv-mockup">
+        <div class="mockup-bar"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div></div>
+        <div class="inv-header">
+          <div class="inv-header-title">Revisión antes de publicar · DOM-041</div>
+        </div>
+        <div style="padding:16px 20px;display:flex;flex-direction:column;gap:10px;">
+          <div class="checklist-row ok inv-row">
+            <span class="checklist-label">✓ Fotografías cargadas</span>
+            <span class="checklist-badge badge-ok">OK</span>
+          </div>
+          <div class="checklist-row ok inv-row">
+            <span class="checklist-label">✓ Precio confirmado</span>
+            <span class="checklist-badge badge-ok">OK</span>
+          </div>
+          <div class="checklist-row warn inv-row">
+            <span class="checklist-label">⚠ Medidas incompletas</span>
+            <span class="checklist-badge badge-warn">Revisar</span>
+          </div>
+          <div class="checklist-row error inv-row">
+            <span class="checklist-label">✗ Ubicación en tienda</span>
+            <span class="checklist-badge badge-err">Falta</span>
+          </div>
+          <div class="checklist-alert inv-row">
+            <span style="font-size:18px;">⚠</span>
+            <span>No se puede publicar: 2 campos requieren revisión</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ S7 · MÓDULO 3 · CATÁLOGO ══════════════════════════ -->
+<div class="module-wrapper auto-section" id="s7">
+  <div class="module-section">
+    <div class="mod-left">
+      <div class="mod-number reveal">03</div>
+      <p class="mod-label reveal">Módulo 3</p>
+      <h2 class="mod-title reveal reveal-delay-1">Catálogo Digital<br><em class="grad-text">Premium</em></h2>
+      <p class="mod-phrase reveal reveal-delay-2">El escaparate nacional de Domus.</p>
+      <p class="mod-body reveal reveal-delay-3">Aquí Domus deja de depender solo de redes y mensajes. Aquí empieza a tener un canal serio de conversión con presencia nacional estructurada.</p>
+      <div class="mod-tags reveal reveal-delay-4">
+        <span class="mod-tag">Grid premium</span><span class="mod-tag">Fichas detalladas</span><span class="mod-tag">Filtros</span>
+        <span class="mod-tag">Buscador</span><span class="mod-tag">Apartado</span><span class="mod-tag">Solicitar info</span>
+      </div>
+    </div>
+    <div class="mockup-wrapper reveal reveal-delay-2">
+      <div class="cat-mockup">
+        <div class="mockup-bar"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div></div>
+        <div class="cat-nav">
+          <div class="cat-nav-logo">DOMUS · Antigüedades</div>
+          <div class="cat-nav-links"><span>Todo</span><span>Muebles</span><span>Relojes</span><span>Arte</span></div>
+        </div>
+        <div class="cat-grid">
+          <div class="cat-card inv-row"><div class="cat-img"><img src="images/product-1.png" alt="Espejo Dorado"></div><div class="cat-info"><div class="cat-piece-name">Espejo Dorado S. XIX</div><div class="cat-piece-meta">Decoración · Francia</div><div class="cat-piece-price">$22,500</div><div class="cat-btn">Solicitar</div></div></div>
+          <div class="cat-card inv-row"><div class="cat-img"><img src="images/product-2.png" alt="Cómoda Luis XV"></div><div class="cat-info"><div class="cat-piece-name">Cómoda Luis XV</div><div class="cat-piece-meta">Mueble · España</div><div class="cat-piece-price">$48,000</div><div class="cat-btn">Apartar</div></div></div>
+          <div class="cat-card inv-row"><div class="cat-img"><img src="images/product-3.png" alt="Reloj Péndulo"></div><div class="cat-info"><div class="cat-piece-name">Reloj Péndulo</div><div class="cat-piece-meta">Relojes · Inglaterra</div><div class="cat-piece-price">$36,000</div><div class="cat-btn">Solicitar</div></div></div>
+          <div class="cat-card inv-row"><div class="cat-img"><img src="images/product-4.png" alt="Vitrina Art Nouveau"></div><div class="cat-info"><div class="cat-piece-name">Vitrina Art Nouveau</div><div class="cat-piece-meta">Mueble · Bélgica</div><div class="cat-piece-price">$67,000</div><div class="cat-btn">Apartar</div></div></div>
+          <div class="cat-card inv-row"><div class="cat-img">💡</div><div class="cat-info"><div class="cat-piece-name">Lámpara Tiffany</div><div class="cat-piece-meta">Iluminación · USA</div><div class="cat-piece-price">$19,800</div><div class="cat-btn">Solicitar</div></div></div>
+          <div class="cat-card inv-row"><div class="cat-img">🏺</div><div class="cat-info"><div class="cat-piece-name">Ánfora Griega</div><div class="cat-piece-meta">Arte · Grecia</div><div class="cat-piece-price">$31,500</div><div class="cat-btn">Apartar</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ S8 · MÓDULO 4 · IA ══════════════════════════ -->
+<div class="module-wrapper auto-section" id="s8">
+  <div class="module-section reverse">
+    <div class="mod-left">
+      <div class="mod-number reveal">04</div>
+      <p class="mod-label reveal">Módulo 4</p>
+      <h2 class="mod-title reveal reveal-delay-1">Agente de IA<br><em class="grad-text">Domus</em></h2>
+      <p class="mod-phrase reveal reveal-delay-2">El agente no reemplaza la confianza humana; la prepara.</p>
+      <p class="mod-body reveal reveal-delay-3">Primera línea de atención que responde rápido, filtra intención y entrega conversaciones más claras al equipo humano. Esta capa no enfría la marca — la vuelve más rápida y eficiente.</p>
+      <div class="mod-tags reveal reveal-delay-4">
+        <span class="mod-tag">Calificación de lead</span><span class="mod-tag">FAQs</span>
+        <span class="mod-tag">Clasificación</span><span class="mod-tag">Handoff humano</span>
+      </div>
+    </div>
+    <div class="mockup-wrapper reveal reveal-delay-2">
+      <div class="agent-mockup">
+        <div class="mockup-bar"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div></div>
+        <div class="agent-header">
+          <div class="agent-avatar">🤖</div>
+          <div><div class="agent-name">Asistente Domus</div><div class="agent-status">● En línea</div></div>
+        </div>
+        <div class="agent-messages">
+          <div class="msg msg-agent">
+            <div class="msg-bubble" style="width:280px;">Bienvenido a Domus Antigüedades. ¿Busca alguna pieza en especial?</div>
+            <div class="msg-meta">9:14 AM</div>
+          </div>
+          <div class="msg msg-user">
+            <div class="msg-bubble" style="width:250px;">Busco muebles del siglo XIX, por favor.</div>
+            <div class="msg-meta">9:15 AM</div>
+          </div>
+          <div class="msg msg-agent">
+            <div class="msg-bubble" style="width:290px;">Perfecto. Tenemos 3 piezas en esa categoría. ¿Desea verlas?</div>
+            <div class="msg-meta">9:15 AM</div>
+          </div>
+          <div class="msg msg-user">
+            <div class="msg-bubble" style="width:240px;">Sí, quiero comprar pronto. Soy de MTY.</div>
+            <div class="msg-meta">9:16 AM</div>
+          </div>
+        </div>
+        <div class="handoff-card inv-row">
+          <div class="handoff-title">→ Transferir a asesor humano</div>
+          <div class="handoff-row"><span>Interés</span><span class="handoff-val">Muebles S. XIX</span></div>
+          <div class="handoff-row"><span>Intención</span><span class="handoff-val" style="color:var(--blue)">Alta · 2 semanas</span></div>
+          <div class="handoff-row"><span>Ciudad</span><span class="handoff-val">Monterrey</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ S9 · MÓDULO 5 · CRM ══════════════════════════ -->
+<div class="module-wrapper auto-section" id="s9">
+  <div class="module-section">
+    <div class="mod-left">
+      <div class="mod-number reveal">05</div>
+      <p class="mod-label reveal">Módulo 5</p>
+      <h2 class="mod-title reveal reveal-delay-1">Seguimiento Comercial<br>y <em class="grad-text">CRM</em></h2>
+      <p class="mod-phrase reveal reveal-delay-2">La atención humana mejora cuando tiene contexto.</p>
+      <p class="mod-body reveal reveal-delay-3">La estructura que le da memoria, orden y prioridad al proceso comercial. La atención no debe depender de acordarse — debe depender de sistema.</p>
+      <div class="mod-tags reveal reveal-delay-4">
+        <span class="mod-tag">Pipeline</span><span class="mod-tag">Intención</span><span class="mod-tag">Historial</span>
+        <span class="mod-tag">Recordatorios</span><span class="mod-tag">Responsable</span>
+      </div>
+    </div>
+    <div class="mockup-wrapper reveal reveal-delay-2">
+      <div class="crm-mockup">
+        <div class="mockup-bar"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div></div>
+        <div style="display:flex;flex:1;height:calc(100% - 38px);">
+          <div class="crm-sidebar">
+            <div class="crm-side-label">Prospectos activos</div>
+            <div class="crm-lead active"><div class="crm-lead-name">Roberto V.</div><div class="crm-lead-tag">Muebles · <span class="crm-lead-int int-alta">Alta</span></div></div>
+            <div class="crm-lead"><div class="crm-lead-name">Laura M.</div><div class="crm-lead-tag">Decoración · <span class="crm-lead-int int-media">Media</span></div></div>
+            <div class="crm-lead"><div class="crm-lead-name">Carlos P.</div><div class="crm-lead-tag">Arte · <span class="crm-lead-int int-alta">Alta</span></div></div>
+            <div class="crm-lead"><div class="crm-lead-name">Ana R.</div><div class="crm-lead-tag">Relojes · <span class="crm-lead-int int-baja">Baja</span></div></div>
+          </div>
+          <div class="crm-main">
+            <div class="crm-prospect-header">
+              <div><div class="crm-prospect-name">Roberto Villanueva</div><div class="crm-prospect-meta">Canal: Instagram · Monterrey</div></div>
+              <div class="crm-badge-alta">Intención Alta</div>
+            </div>
+            <div class="crm-info-grid">
+              <div class="crm-info-item"><div class="crm-info-label">Interés</div><div class="crm-info-val">Cómoda Luis XV</div></div>
+              <div class="crm-info-item"><div class="crm-info-label">Presupuesto</div><div class="crm-info-val">$40k–$60k</div></div>
+              <div class="crm-info-item"><div class="crm-info-label">Tiempo</div><div class="crm-info-val">2 semanas</div></div>
+              <div class="crm-info-item"><div class="crm-info-label">Acción</div><div class="crm-info-val" style="color:var(--blue)">Enviar cotización</div></div>
+            </div>
+            <div class="crm-history-label">Historial</div>
+            <div class="crm-history-item"><div class="crm-hist-dot"></div><div><div class="crm-hist-text">Primer contacto por Instagram DM. Interés en muebles S. XIX.</div><div class="crm-hist-date">Hoy 9:16 AM</div></div></div>
+            <div class="crm-history-item"><div class="crm-hist-dot" style="background:var(--border)"></div><div><div class="crm-hist-text">Lead recibido del Agente IA. Calificado como comprador probable.</div><div class="crm-hist-date">Hoy 9:15 AM</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ S10 · MÓDULO 6 · ECOMMERCE ══════════════════════════ -->
+<div class="module-wrapper auto-section" id="s10">
+  <div class="module-section reverse">
+    <div class="mod-left">
+      <div class="mod-number reveal">06</div>
+      <p class="mod-label reveal">Módulo 6</p>
+      <h2 class="mod-title reveal reveal-delay-1">Ecommerce<br><em class="grad-text">Asistido</em></h2>
+      <p class="mod-phrase reveal reveal-delay-2">No un carrito genérico. Sí una conversión premium.</p>
+      <p class="mod-body reveal reveal-delay-3">Una capa de conversión pensada para piezas únicas, sin volver a Domus una tienda genérica. Lo correcto aquí es un ecommerce asistido y elegante.</p>
+      <div class="mod-tags reveal reveal-delay-4">
+        <span class="mod-tag">Apartado</span><span class="mod-tag">Anticipo</span>
+        <span class="mod-tag">Validación humana</span><span class="mod-tag">Políticas</span>
+      </div>
+    </div>
+    <div class="mockup-wrapper reveal reveal-delay-2">
+      <div class="ecom-mockup">
+        <div class="mockup-bar"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div></div>
+
+        <!-- Hero imagen grande -->
+        <div class="ecom-hero-img">
+          <img src="images/product-2.png" alt="Cómoda Luis XV">
+          <div class="ecom-hero-badge">● Disponible</div>
+          <div class="ecom-hero-id">DOM-041</div>
+        </div>
+
+        <!-- Info de producto -->
+        <div class="ecom-product-info">
+          <div>
+            <div class="ecom-piece-name">Cómoda Luis XV</div>
+            <div class="ecom-piece-era">Francia · Siglo XVIII · Madera tallada</div>
+          </div>
+          <div class="ecom-piece-price">$48,000</div>
+        </div>
+
+        <!-- Formulario compacto 2 columnas -->
+        <div class="ecom-form-section">
+          <div class="ecom-form-field">
+            <div class="ecom-form-label">Nombre</div>
+            <input class="ecom-input" value="Roberto Villanueva" readonly>
+          </div>
+          <div class="ecom-form-field">
+            <div class="ecom-form-label">Ciudad</div>
+            <input class="ecom-input" value="Monterrey, NL" readonly>
+          </div>
+          <div class="ecom-form-field full">
+            <div class="ecom-form-label">Correo electrónico</div>
+            <input class="ecom-input" value="roberto@email.com" readonly>
+          </div>
+        </div>
+
+        <!-- CTAs -->
+        <div class="ecom-actions">
+          <div class="ecom-btn-primary">Apartar pieza · 20% anticipo</div>
+          <div class="ecom-btn-sec">Solicitar más información</div>
+        </div>
+        <div class="ecom-policies">Anticipo no reembolsable · Reserva por 7 días · Validación humana incluida</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ S11 · MÓDULO 7 · EXPERIENCIA ══════════════════════════ -->
+<div class="module-wrapper auto-section" id="s11">
+  <div class="module-section">
+    <div class="mod-left">
+      <div class="mod-number reveal">07</div>
+      <p class="mod-label reveal">Módulo 7</p>
+      <h2 class="mod-title reveal reveal-delay-1">Experiencia, Entrega<br>y <em class="grad-text">Escalamiento</em></h2>
+      <p class="mod-phrase reveal reveal-delay-2">Sin base no hay experiencia escalable.</p>
+      <p class="mod-body reveal reveal-delay-3">La capa que convierte la operación en experiencia memorable. Las experiencias no sustituyen el sistema — son la consecuencia natural de tenerlo bien armado.</p>
+      <div class="mod-tags reveal reveal-delay-4">
+        <span class="mod-tag">Postventa</span><span class="mod-tag">Campañas</span>
+        <span class="mod-tag">Eventos</span><span class="mod-tag">CDMX</span><span class="mod-tag">VIP</span>
+      </div>
+    </div>
+    <div class="mockup-wrapper reveal reveal-delay-2">
+      <div class="inv-mockup">
+        <div class="mockup-bar"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div></div>
+        <div class="exp-content">
+          <div style="padding:14px 20px 8px;font-size:13px;font-weight:600;color:var(--text);letter-spacing:-0.01em;">Experiencia de entrega · DOM-041</div>
+          <div class="exp-timeline" style="padding:0 20px 16px 36px;">
+            <div class="exp-step inv-row"><div class="exp-step-label">Confirmación</div><div class="exp-step-desc">Notificación automática al cerrar la venta con resumen de pieza.</div></div>
+            <div class="exp-step inv-row"><div class="exp-step-label">Coordinación</div><div class="exp-step-desc">El asesor confirma método de entrega o visita en tienda.</div></div>
+            <div class="exp-step inv-row"><div class="exp-step-label">Postventa</div><div class="exp-step-desc">Mensaje de confirmación y cuidados de la pieza.</div></div>
+          </div>
+          <div class="exp-events" style="padding:0 20px 20px;">
+            <div class="exp-event inv-row"><div class="exp-event-icon">🍷</div><div class="exp-event-name">Cata en Domus</div><div class="exp-event-sub">Mayo · Clientes VIP</div></div>
+            <div class="exp-event inv-row"><div class="exp-event-icon">🏙️</div><div class="exp-event-name">Domus CDMX</div><div class="exp-event-sub">2027 · Expansión</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ S12 · IMPLEMENTACIÓN ══════════════════════════ -->
+<section id="s12" class="auto-section">
+  <div class="impl-container">
+    <p class="section-eyebrow reveal">Implementación</p>
+    <h2 class="section-title reveal reveal-delay-1" style="text-align:center;">Por fases, en el<br>orden <em class="grad-text">correcto</em></h2>
+    <p class="section-body reveal reveal-delay-2" style="text-align:center;max-width:480px;margin:0 auto;">La clave no es meter muchas herramientas. La clave es construir la base correcta primero.</p>
+    <div class="impl-phases">
+      <div class="phase-card reveal reveal-delay-2">
+        <div class="phase-num">1</div>
+        <div class="phase-name">Orden y base</div>
+        <ul class="phase-items">
+          <li class="phase-item">Inventario maestro</li>
+          <li class="phase-item">Control operativo</li>
+          <li class="phase-item">Validación y candados</li>
+        </ul>
+      </div>
+      <div class="phase-card reveal reveal-delay-3">
+        <div class="phase-num">2</div>
+        <div class="phase-name">Conversión</div>
+        <ul class="phase-items">
+          <li class="phase-item">Catálogo digital</li>
+          <li class="phase-item">Agente IA</li>
+          <li class="phase-item">Seguimiento CRM</li>
+        </ul>
+      </div>
+      <div class="phase-card reveal reveal-delay-4">
+        <div class="phase-num">3</div>
+        <div class="phase-name">Experiencia</div>
+        <ul class="phase-items">
+          <li class="phase-item">Ecommerce asistido</li>
+          <li class="phase-item">Campañas y eventos</li>
+          <li class="phase-item">Preparación CDMX</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ S13 · PROPUESTA ══════════════════════════ -->
+<section id="s13" class="auto-section">
+  <p class="section-eyebrow reveal" style="margin-bottom:32px;">Propuesta comercial</p>
+  <div class="price-card reveal reveal-delay-1">
+    <div class="price-label">Sistema Domus Base</div>
+    <div class="price-package">La base que habilita todo lo demás</div>
+    <div class="price-amount"><span class="price-currency">$</span>98,000</div>
+    <div class="price-unit">MXN · Paquete completo de arranque</div>
+    <div class="price-includes">
+      <div class="price-inc-label">Incluye</div>
+      <div class="price-inc-item"><span class="price-check">✓</span>Arquitectura funcional del sistema</div>
+      <div class="price-inc-item"><span class="price-check">✓</span>Núcleo maestro de inventario</div>
+      <div class="price-inc-item"><span class="price-check">✓</span>Control operativo y checklist de validación</div>
+      <div class="price-inc-item"><span class="price-check">✓</span>Catálogo digital premium</div>
+      <div class="price-inc-item"><span class="price-check">✓</span>Agente de IA Domus (MVP)</div>
+      <div class="price-inc-item"><span class="price-check">✓</span>Seguimiento comercial base (CRM)</div>
+      <div class="price-inc-item"><span class="price-check">✓</span>Lineamientos de experiencia y crecimiento</div>
+    </div>
+    <p class="price-tagline">El primer paso no es pequeño. Es el cimiento.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════ S14 · VALOR ══════════════════════════ -->
+<section id="s14" class="auto-section">
+  <p class="section-eyebrow reveal">Resultados</p>
+  <h2 class="section-title reveal reveal-delay-1" style="text-align:center;max-width:700px;">Qué habilita<br>este <em class="grad-text">sistema</em></h2>
+  <div class="valor-grid">
+    <div class="valor-card reveal reveal-delay-1"><div class="valor-icon">🛡️</div><div class="valor-text">Menos errores operativos y publicaciones incorrectas</div></div>
+    <div class="valor-card reveal reveal-delay-2"><div class="valor-icon">📦</div><div class="valor-text">Control total del inventario en tiempo real</div></div>
+    <div class="valor-card reveal reveal-delay-3"><div class="valor-icon">🌐</div><div class="valor-text">Catálogo digital serio con presencia nacional</div></div>
+    <div class="valor-card reveal reveal-delay-4"><div class="valor-icon">⚡</div><div class="valor-text">Mayor capacidad de conversión y prospectos calificados</div></div>
+    <div class="valor-card reveal reveal-delay-5"><div class="valor-icon">🧠</div><div class="valor-text">Mejor uso del tiempo del equipo humano</div></div>
+    <div class="valor-card reveal reveal-delay-6"><div class="valor-icon">✨</div><div class="valor-text">Base real para experiencias, eventos y expansión</div></div>
+    <div class="valor-card reveal reveal-delay-7"><div class="valor-icon">🏙️</div><div class="valor-text">Preparación estructurada para llegar a CDMX</div></div>
+    <div class="valor-card reveal reveal-delay-8"><div class="valor-icon">🏆</div><div class="valor-text">De operación manual valiosa, a marca referente con sistema</div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ S15 · CIERRE ══════════════════════════ -->
+<section id="s15" class="auto-section">
+  <h2 class="cierre-title reveal">Sin base no hay orden.<br>Sin orden no hay <em class="grad-text">escala.</em></h2>
+  <p class="cierre-body reveal reveal-delay-1">Domus ya tiene valor de marca. La siguiente etapa exige estructura. Este sistema está diseñado para proteger lo que ya existe y construir lo que sigue.</p>
+  <div class="cierre-pillars reveal reveal-delay-2">
+    <div class="cierre-pillar">Proteger la operación</div>
+    <div class="cierre-pillar">Profesionalizar la venta</div>
+    <div class="cierre-pillar">Filtrar mejor la demanda</div>
+    <div class="cierre-pillar">Elevar la experiencia</div>
+    <div class="cierre-pillar">Preparar el crecimiento</div>
+  </div>
+  <p class="cierre-final reveal reveal-delay-3">Mi recomendación es arrancar con esta base ahora.<br>Porque sobre esta base sí puede venir lo demás.<br>Pero si no construimos la columna vertebral, lo demás se vuelve improvisación cara.</p>
+  <div class="cierre-cta reveal reveal-delay-4">
+    <button class="btn-primary" style="font-size:17px;padding:16px 36px;">Arrancar ahora</button>
+    <button class="btn-secondary" style="font-size:17px;padding:16px 36px;">Ver propuesta detallada</button>
+  </div>
+</section>
+
+<script>
+// ─── PROGRESS BAR ───
+const progress = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+  const p = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  progress.style.width = p + '%';
+}, { passive: true });
+
+// ─── NAV ───
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+// ─── NAV DOTS ───
+const sections = document.querySelectorAll('section, .module-wrapper');
+const navDots = document.getElementById('navDots');
+sections.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'nav-dot';
+  d.addEventListener('click', () => sections[i].scrollIntoView({ behavior: 'smooth' }));
+  navDots.appendChild(d);
+});
+
+function updateNav() {
+  const dots = navDots.querySelectorAll('.nav-dot');
+  sections.forEach((s, i) => {
+    const r = s.getBoundingClientRect();
+    if (r.top <= window.innerHeight / 2 && r.bottom >= window.innerHeight / 2) {
+      dots[i]?.classList.add('active');
+    } else {
+      dots[i]?.classList.remove('active');
+    }
+  });
+}
+window.addEventListener('scroll', updateNav, { passive: true });
+
+// ─── S4 ACCORDION ───
+const ACC_ICONS = ['🗄️','✅','🖼️','🤖','📊','🛍️','✨'];
+
+// Init: set each circle's icon into data attribute
+document.querySelectorAll('.acc-trigger').forEach((btn, i) => {
+  btn.dataset.icon = ACC_ICONS[i] || '●';
+  // Set initial text: first is active (shows icon), rest show +
+  const circle = btn.querySelector('.acc-circle');
+  if (btn.classList.contains('active')) {
+    circle.textContent = ACC_ICONS[i];
+  } else {
+    circle.textContent = '+';
+  }
+});
+
+document.querySelectorAll('.acc-trigger').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const panelId = btn.dataset.panel;
+    const item    = btn.closest('.acc-item');
+    const body    = item.querySelector('.acc-body');
+    const isOpen  = btn.classList.contains('active');
+
+    // Close all
+    document.querySelectorAll('.acc-trigger').forEach(b => {
+      b.classList.remove('active');
+      b.querySelector('.acc-circle').textContent = '+';
+      b.closest('.acc-item').querySelector('.acc-body').classList.remove('open');
+    });
+    document.querySelectorAll('.s4-panel').forEach(p => p.classList.remove('active'));
+
+    // Open clicked (toggle off if already open)
+    if (!isOpen) {
+      btn.classList.add('active');
+      btn.querySelector('.acc-circle').textContent = btn.dataset.icon;
+      body.classList.add('open');
+      const panel = document.getElementById(panelId);
+      if (panel) panel.classList.add('active');
+    }
+  });
+});
+
+// ─── REVEAL ANIMATIONS ───
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.18 });
+reveals.forEach(r => observer.observe(r));
+
+// Trigger above-fold elements immediately
+setTimeout(() => {
+  reveals.forEach(r => {
+    if (r.getBoundingClientRect().top < window.innerHeight) r.classList.add('visible');
+  });
+}, 80);
+
+// ─── AUTO PLAY ───
+const playBtn = document.getElementById('auto-play-btn');
+const autoSections = document.querySelectorAll('.auto-section');
+let isPlaying = false, playInterval, currentSecIdx = 0;
+
+playBtn.addEventListener('click', () => {
+  if (isPlaying) {
+    clearInterval(playInterval);
+    playBtn.innerHTML = '▶ Reproducir Demo';
+    isPlaying = false;
+  } else {
+    playBtn.innerHTML = '⏸ Pausar Demo';
+    isPlaying = true;
+    if (currentSecIdx >= autoSections.length - 1) currentSecIdx = 0;
+    playInterval = setInterval(() => {
+      currentSecIdx++;
+      if (currentSecIdx >= autoSections.length) {
+        clearInterval(playInterval);
+        playBtn.innerHTML = '▶ Reproducir Demo';
+        isPlaying = false;
+        currentSecIdx = 0;
+      } else {
+        autoSections[currentSecIdx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 5500);
+  }
+});
+</script>
+</body>
+</html>
