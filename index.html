@@ -832,6 +832,68 @@ section {
 }
 .handoff-val { color: var(--text); font-weight: 600; }
 
+.ia-depth-note {
+  margin-top: 28px;
+  padding: 22px;
+  background: linear-gradient(180deg, rgba(245,245,247,0.92), rgba(255,255,255,0.98));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.ia-depth-head {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+  font-weight: 700;
+}
+.ia-depth-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.ia-depth-card {
+  padding: 18px 18px 20px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.ia-depth-card.featured {
+  border-color: rgba(0,113,227,0.22);
+  background: linear-gradient(180deg, rgba(0,113,227,0.05), rgba(255,255,255,0.98));
+  box-shadow: 0 16px 34px rgba(0,113,227,0.10);
+}
+.ia-depth-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: rgba(0,0,0,0.05);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+.ia-depth-card.featured .ia-depth-badge {
+  background: rgba(0,113,227,0.10);
+  color: var(--blue);
+}
+.ia-depth-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.ia-depth-body {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+}
+
 /* ─────────────────────────────── MOCKUP: ECOMMERCE ── */
 .ecom-mockup { background: var(--bg); font-family: var(--font); }
 
@@ -1002,58 +1064,392 @@ section {
 }
 .phase-item::before { content: '→ '; color: var(--blue); font-weight: 600; }
 
-/* ─────────────────────────────── S13 PROPUESTA ── */
-#s13 { background: var(--bg); text-align: center; }
-.price-card {
-  max-width: 700px; width: 100%;
-  padding: 68px 60px;
-  background: var(--bg);
-  backdrop-filter: blur(40px);
+/* ─────────────────────────────── S12B RUTAS ── */
+#s12b { background: var(--bg); text-align: center; }
+.routes-shell { max-width: 1120px; width: 100%; }
+.routes-intro {
+  max-width: 760px;
+  margin: 0 auto 56px;
+}
+.routes-grid {
+  display: grid;
+  grid-template-columns: 0.96fr 1.08fr;
+  gap: 24px;
+  align-items: stretch;
+}
+.route-card {
+  position: relative;
+  padding: 40px 34px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,245,247,0.96));
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
-  position: relative; overflow: hidden;
+  box-shadow: var(--shadow-md);
+  text-align: left;
+  overflow: hidden;
+  transition: transform 0.4s var(--ease-apple), box-shadow 0.4s var(--ease-apple), border-color 0.4s var(--ease-apple);
 }
-.price-card::before {
-  content: ''; position: absolute; top: 0; left: 15%; right: 15%; height: 2px;
+.route-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 14%;
+  right: 14%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.18), transparent);
+}
+.route-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+}
+.route-card.featured {
+  border-color: rgba(0,113,227,0.30);
+  box-shadow: 0 30px 74px rgba(0,113,227,0.15), var(--shadow-md);
+  transform: translateY(-8px);
+}
+.route-card.featured::before {
   background: linear-gradient(90deg, transparent, var(--blue), transparent);
 }
-.price-label {
-  font-size: 12px; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--blue);
-  margin-bottom: 14px; font-weight: 700;
+.route-badge {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  padding: 6px 12px;
+  border-radius: 99px;
+  background: rgba(0,113,227,0.10);
+  border: 1px solid rgba(0,113,227,0.16);
+  color: var(--blue);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
-.price-package {
-  font-size: clamp(22px,3vw,34px); font-weight: 700;
-  color: var(--text); margin-bottom: 52px;
-  letter-spacing: -0.02em;
+.route-kicker {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 14px;
+  font-weight: 700;
 }
-.price-amount {
-  font-size: clamp(52px,7vw,92px); font-weight: 700;
-  color: var(--text); line-height: 1; margin-bottom: 8px;
+.route-price {
+  font-size: clamp(44px, 6vw, 78px);
+  line-height: 1;
+  color: var(--text);
+  font-weight: 700;
   letter-spacing: -0.04em;
+  margin-bottom: 10px;
 }
-.price-currency {
-  font-size: 22px; color: var(--text-secondary);
-  vertical-align: top; margin-top: 18px;
-  display: inline-block; margin-right: 4px; font-weight: 500;
+.route-price span {
+  font-size: 20px;
+  vertical-align: top;
+  margin-top: 12px;
+  display: inline-block;
+  color: var(--text-secondary);
+  margin-right: 4px;
+  font-weight: 500;
 }
-.price-unit { font-size: 16px; color: var(--text-secondary); margin-bottom: 52px; font-weight: 400; }
-.price-includes { text-align: left; }
-.price-inc-label {
-  font-size: 11px; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--text-secondary);
-  margin-bottom: 20px; font-weight: 700;
+.route-caption {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  font-weight: 500;
 }
-.price-inc-item {
-  display: flex; align-items: center; gap: 14px;
-  padding: 11px 0; border-bottom: 1px solid var(--border);
-  font-size: 15px; color: var(--text); font-weight: 500;
+.route-title {
+  font-size: clamp(26px, 3.4vw, 42px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin-bottom: 16px;
+  font-weight: 700;
 }
-.price-check { color: var(--blue); font-size: 16px; font-weight: 700; }
-.price-tagline {
-  margin-top: 44px; font-size: 18px; font-weight: 500;
-  color: var(--text-secondary); letter-spacing: -0.01em;
+.route-body {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--text-secondary);
+  letter-spacing: -0.01em;
+}
+.route-stack {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.route-stack-item {
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.75);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text);
+  font-weight: 500;
+}
+.route-impact {
+  margin-top: 20px;
+  padding: 18px 18px 20px;
+  border-radius: var(--radius-md);
+  background: rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+.route-card.featured .route-impact {
+  background: rgba(0,113,227,0.06);
+  border-color: rgba(0,113,227,0.14);
+}
+.route-impact-label {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+.route-impact-text {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.routes-footnote {
+  margin: 30px auto 0;
+  max-width: 780px;
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  letter-spacing: -0.01em;
+}
+
+/* ─────────────────────────────── S13 COMPARACIÓN ── */
+#s13 { background: var(--bg-alt); text-align: center; }
+.packages-shell { max-width: 1160px; width: 100%; }
+.packages-intro {
+  max-width: 760px;
+  margin: 0 auto 48px;
+}
+.package-cards {
+  display: grid;
+  grid-template-columns: 0.96fr 1.08fr;
+  gap: 24px;
+  align-items: stretch;
+}
+.package-card {
+  position: relative;
+  padding: 40px 34px;
+  background: rgba(255,255,255,0.90);
+  backdrop-filter: blur(28px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  text-align: left;
+  overflow: hidden;
+}
+.package-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 14%;
+  right: 14%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.18), transparent);
+}
+.package-card.recommended {
+  border-color: rgba(0,113,227,0.34);
+  box-shadow: 0 30px 74px rgba(0,113,227,0.16), var(--shadow-md);
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(244,249,255,0.96));
+  transform: translateY(-10px);
+}
+.package-card.recommended::before {
+  background: linear-gradient(90deg, transparent, var(--blue), transparent);
+}
+.package-badge {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  padding: 6px 12px;
+  border-radius: 99px;
+  background: rgba(0,113,227,0.10);
+  border: 1px solid rgba(0,113,227,0.16);
+  color: var(--blue);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.package-kicker {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 14px;
+  font-weight: 700;
+}
+.package-name {
+  font-size: clamp(24px, 3.4vw, 40px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+.package-micro {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 26px;
+  letter-spacing: -0.01em;
+}
+.package-amount {
+  font-size: clamp(46px, 6vw, 82px);
+  line-height: 1;
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  margin-bottom: 8px;
+}
+.package-amount span {
+  font-size: 20px;
+  vertical-align: top;
+  margin-top: 12px;
+  display: inline-block;
+  color: var(--text-secondary);
+  margin-right: 4px;
+  font-weight: 500;
+}
+.package-unit {
+  font-size: 15px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.package-shared {
+  margin-top: 28px;
+  padding: 18px 20px;
+  background: rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: var(--radius-lg);
+}
+.package-card.recommended .package-shared {
+  background: rgba(0,113,227,0.05);
+  border-color: rgba(0,113,227,0.10);
+}
+.package-shared-label,
+.package-depth-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+.package-core {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.package-core-item {
+  padding: 7px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+.package-depth {
+  margin-top: 22px;
+}
+.package-depth-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+}
+.package-depth-item:last-child { border-bottom: none; }
+.package-depth-mark {
+  color: var(--blue);
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.package-depth-item strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.package-cta-note {
+  margin-top: 22px;
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  background: rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.05);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+  font-weight: 500;
+}
+.package-card.recommended .package-cta-note {
+  background: rgba(0,113,227,0.06);
+  border-color: rgba(0,113,227,0.15);
+}
+.compare-board {
+  margin-top: 34px;
+  background: rgba(255,255,255,0.90);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.compare-head,
+.compare-row {
+  display: grid;
+  grid-template-columns: 0.88fr 1fr 1.08fr;
+}
+.compare-head { background: rgba(0,0,0,0.03); }
+.compare-head div,
+.compare-row div {
+  padding: 16px 20px;
+  text-align: left;
+}
+.compare-head div {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+.compare-row {
+  border-top: 1px solid var(--border);
+}
+.compare-label {
+  background: rgba(0,0,0,0.015);
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.compare-cell {
+  font-size: 14px;
+  line-height: 1.68;
+  color: var(--text-secondary);
+}
+.compare-cell strong { color: var(--text); }
+.compare-cell-title {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+.compare-cell-featured {
+  background: rgba(0,113,227,0.035);
+}
+.compare-cell-featured .compare-cell-title {
+  color: var(--blue);
 }
 
 /* ─────────────────────────────── S14 VALOR ── */
@@ -1078,6 +1474,21 @@ section {
 
 /* ─────────────────────────────── S15 CIERRE ── */
 #s15 { background: var(--bg); text-align: center; }
+.cierre-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 99px;
+  background: rgba(0,113,227,0.08);
+  border: 1px solid rgba(0,113,227,0.18);
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
 .cierre-title {
   font-size: clamp(34px,5vw,76px); font-weight: 700;
   line-height: 1.06; max-width: 800px; margin-bottom: 32px;
@@ -1108,6 +1519,28 @@ section {
 .cierre-final {
   font-size: clamp(16px,2vw,21px); font-weight: 400;
   color: var(--text-secondary); max-width: 620px; line-height: 1.8;
+  letter-spacing: -0.01em;
+}
+.cierre-recommendation {
+  max-width: 780px;
+  margin: 48px auto 0;
+  padding: 26px 28px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(244,249,255,0.95));
+  border: 1px solid rgba(0,113,227,0.20);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+.cierre-reco-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.cierre-reco-body {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--text-secondary);
   letter-spacing: -0.01em;
 }
 .cierre-cta {
@@ -1147,30 +1580,36 @@ section {
 .mockup-wrapper.visible .crm-lead:nth-child(3) { animation-delay: 0.5s; }
 .mockup-wrapper.visible .crm-lead:nth-child(4) { animation-delay: 0.65s; }
 
-/* ─────────────────────────────── TYPEWRITER IA ── */
-@keyframes typing { from { width: 0; } to { width: 100%; } }
-@keyframes blinkCursor { 50% { border-color: transparent; } }
-
-.mockup-wrapper.visible .msg-bubble {
-  overflow: hidden; white-space: nowrap;
-  border-right: 2px solid var(--blue);
-  width: 0;
-  animation: typing 1.4s steps(38, end) forwards, blinkCursor 0.7s step-end infinite;
+/* ─────────────────────────────── CHAT IA ── */
+@keyframes chatAppear {
+  0% { opacity: 0; transform: translateY(10px); filter: blur(4px); }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
-.mockup-wrapper.visible .msg-agent:nth-child(1) .msg-bubble { animation-delay: 0.4s; }
-.mockup-wrapper.visible .msg-user:nth-child(2) .msg-bubble { animation-delay: 2.2s; }
-.mockup-wrapper.visible .msg-agent:nth-child(3) .msg-bubble { animation-delay: 4.0s; }
-.mockup-wrapper.visible .msg-user:nth-child(4) .msg-bubble { animation-delay: 5.8s; }
+
+.agent-mockup .msg-bubble {
+  width: auto !important;
+  max-width: 100%;
+  white-space: normal;
+}
+
+.mockup-wrapper.visible .agent-mockup .msg {
+  opacity: 0;
+  animation: chatAppear 0.8s var(--ease-apple) forwards;
+}
+.mockup-wrapper.visible .agent-mockup .msg:nth-child(1) { animation-delay: 0.35s; }
+.mockup-wrapper.visible .agent-mockup .msg:nth-child(2) { animation-delay: 1.2s; }
+.mockup-wrapper.visible .agent-mockup .msg:nth-child(3) { animation-delay: 2.05s; }
+.mockup-wrapper.visible .agent-mockup .msg:nth-child(4) { animation-delay: 2.9s; }
 
 .msg-meta { opacity: 0; transition: opacity 0.4s; }
-.mockup-wrapper.visible .msg-agent:nth-child(1) .msg-meta { transition-delay: 1.8s; opacity: 1; }
-.mockup-wrapper.visible .msg-user:nth-child(2) .msg-meta { transition-delay: 3.6s; opacity: 1; }
-.mockup-wrapper.visible .msg-agent:nth-child(3) .msg-meta { transition-delay: 5.4s; opacity: 1; }
-.mockup-wrapper.visible .msg-user:nth-child(4) .msg-meta { transition-delay: 7.2s; opacity: 1; }
+.mockup-wrapper.visible .agent-mockup .msg:nth-child(1) .msg-meta { transition-delay: 1.0s; opacity: 1; }
+.mockup-wrapper.visible .agent-mockup .msg:nth-child(2) .msg-meta { transition-delay: 1.85s; opacity: 1; }
+.mockup-wrapper.visible .agent-mockup .msg:nth-child(3) .msg-meta { transition-delay: 2.7s; opacity: 1; }
+.mockup-wrapper.visible .agent-mockup .msg:nth-child(4) .msg-meta { transition-delay: 3.55s; opacity: 1; }
 
 /* ─────────────────────────────── RESPONSIVE ── */
 @media (max-width: 960px) {
-  .s2-grid, .module-section, .impl-phases, .valor-grid, .ecom-content, .crm-mockup {
+  .s2-grid, .module-section, .impl-phases, .valor-grid, .ecom-content, .crm-mockup, .routes-grid, .package-cards, .ia-depth-grid {
     grid-template-columns: 1fr;
   }
   .module-section.reverse { direction: ltr; }
@@ -1179,15 +1618,35 @@ section {
   section, .module-wrapper { padding: 80px 24px; }
   .flow-steps { flex-direction: column; }
   .flow-arrow { transform: rotate(90deg); }
-  .price-card { padding: 44px 32px; }
   .crm-mockup { height: auto; flex-direction: column; }
   .crm-sidebar { width: 100%; display: flex; overflow-x: auto; gap: 0; border-right: none; border-bottom: 1px solid var(--border); }
+  .route-card, .package-card { padding: 30px 24px; }
+  .route-card.featured, .package-card.recommended { transform: none; }
+  .compare-board {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    overflow: visible;
+  }
+  .compare-head { display: none; }
+  .compare-row {
+    grid-template-columns: 1fr;
+    background: rgba(255,255,255,0.90);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .compare-row div { padding: 14px 16px; }
+  .compare-label { border-bottom: 1px solid var(--border); }
+  .compare-cell { border-top: 1px solid rgba(0,0,0,0.04); }
 }
 @media (max-width: 600px) {
   .hero-title { font-size: 36px; }
   .pain-cards { grid-template-columns: 1fr; }
   .cat-grid { grid-template-columns: 1fr 1fr; }
   .valor-grid { grid-template-columns: 1fr 1fr; }
+  .route-price, .package-amount { letter-spacing: -0.03em; }
 }
 </style>
 </head>
@@ -1715,6 +2174,21 @@ section {
         <span class="mod-tag">Calificación de lead</span><span class="mod-tag">FAQs</span>
         <span class="mod-tag">Clasificación</span><span class="mod-tag">Handoff humano</span>
       </div>
+      <div class="ia-depth-note reveal reveal-delay-5">
+        <div class="ia-depth-head">Cómo cambia entre rutas</div>
+        <div class="ia-depth-grid">
+          <div class="ia-depth-card">
+            <div class="ia-depth-badge">Base</div>
+            <div class="ia-depth-title">Recibe y filtra lo básico</div>
+            <p class="ia-depth-body">Atiende preguntas iniciales, detecta interés general y pasa la conversación al equipo para continuar.</p>
+          </div>
+          <div class="ia-depth-card featured">
+            <div class="ia-depth-badge">Escalamiento</div>
+            <div class="ia-depth-title">Clasifica mejor y prepara mejor el handoff</div>
+            <p class="ia-depth-body">Entrega intención, contexto comercial y siguiente paso recomendado para que el asesor responda con más claridad y cierre mejor.</p>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="mockup-wrapper reveal reveal-delay-2">
       <div class="agent-mockup">
@@ -1742,9 +2216,10 @@ section {
           </div>
         </div>
         <div class="handoff-card inv-row">
-          <div class="handoff-title">→ Transferir a asesor humano</div>
+          <div class="handoff-title">→ Handoff comercial preparado</div>
           <div class="handoff-row"><span>Interés</span><span class="handoff-val">Muebles S. XIX</span></div>
           <div class="handoff-row"><span>Intención</span><span class="handoff-val" style="color:var(--blue)">Alta · 2 semanas</span></div>
+          <div class="handoff-row"><span>Siguiente paso</span><span class="handoff-val">Cotización + visita</span></div>
           <div class="handoff-row"><span>Ciudad</span><span class="handoff-val">Monterrey</span></div>
         </div>
       </div>
@@ -1931,25 +2406,165 @@ section {
   </div>
 </section>
 
+<!-- ══════════════════════════ S12B · RUTAS ══════════════════════════ -->
+<section id="s12b" class="auto-section">
+  <div class="routes-shell">
+    <div class="routes-intro">
+      <p class="section-eyebrow reveal">Elegir cómo crecer</p>
+      <h2 class="section-title reveal reveal-delay-1" style="text-align:center;">Dos rutas para construir<br><em class="grad-text">Domus</em></h2>
+      <p class="section-body reveal reveal-delay-2" style="text-align:center;max-width:640px;margin:0 auto;">Las dos rutas construyen sistema. La diferencia es simple: una ordena la tienda; la otra ordena la tienda y deja lista la máquina para crecer con más profundidad comercial y de experiencia.</p>
+    </div>
+
+    <div class="routes-grid">
+      <div class="route-card reveal reveal-delay-2">
+        <div class="route-kicker">Ruta 01 · Base</div>
+        <div class="route-price"><span>$</span>98,000</div>
+        <div class="route-caption">MXN · Resuelve el problema actual</div>
+        <h3 class="route-title">Te ordena la tienda.</h3>
+        <p class="route-body">Centraliza inventario, corrige errores operativos y profesionaliza la venta para que Domus deje de depender de memoria, mensajes sueltos y procesos manuales.</p>
+        <div class="route-stack">
+          <div class="route-stack-item">Orden claro en inventario, catálogo, ecommerce y atención inicial.</div>
+          <div class="route-stack-item">Reduce desorden, errores y fugas comerciales del presente.</div>
+          <div class="route-stack-item">La profundidad para crecer se deja para una segunda etapa.</div>
+        </div>
+        <div class="route-impact">
+          <div class="route-impact-label">Resultado</div>
+          <div class="route-impact-text">Domus opera mejor hoy.</div>
+        </div>
+      </div>
+
+      <div class="route-card featured reveal reveal-delay-3">
+        <div class="route-badge">Recomendado</div>
+        <div class="route-kicker">Ruta 02 · Escalamiento</div>
+        <div class="route-price"><span>$</span>168,000</div>
+        <div class="route-caption">MXN · La ruta correcta para la visión de Domus</div>
+        <h3 class="route-title">Te ordena la tienda y deja lista la máquina para crecer.</h3>
+        <p class="route-body">Incluye la base operativa, pero va más profundo en conversión, experiencia, seguimiento y preparación comercial para campañas, eventos, activaciones y crecimiento hacia CDMX.</p>
+        <div class="route-stack">
+          <div class="route-stack-item">Mismo frente base: inventario, catálogo, ecommerce y agente IA.</div>
+          <div class="route-stack-item">Mayor profundidad en cómo esos módulos convierten, coordinan y sostienen experiencia premium.</div>
+          <div class="route-stack-item">Construye desde hoy la columna vertebral para crecer sin rehacer después.</div>
+        </div>
+        <div class="route-impact">
+          <div class="route-impact-label">Resultado</div>
+          <div class="route-impact-text">Domus opera mejor hoy y queda lista para el siguiente nivel.</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="routes-footnote reveal reveal-delay-4">La diferencia no es si existe inventario, catálogo, ecommerce o agente IA. La diferencia es la profundidad con la que Domus queda preparada para usarlos bien, convertir mejor y crecer sin improvisación.</p>
+  </div>
+</section>
+
 <!-- ══════════════════════════ S13 · PROPUESTA ══════════════════════════ -->
 <section id="s13" class="auto-section">
-  <p class="section-eyebrow reveal" style="margin-bottom:32px;">Propuesta comercial</p>
-  <div class="price-card reveal reveal-delay-1">
-    <div class="price-label">Sistema Domus Base</div>
-    <div class="price-package">La base que habilita todo lo demás</div>
-    <div class="price-amount"><span class="price-currency">$</span>98,000</div>
-    <div class="price-unit">MXN · Paquete completo de arranque</div>
-    <div class="price-includes">
-      <div class="price-inc-label">Incluye</div>
-      <div class="price-inc-item"><span class="price-check">✓</span>Arquitectura funcional del sistema</div>
-      <div class="price-inc-item"><span class="price-check">✓</span>Núcleo maestro de inventario</div>
-      <div class="price-inc-item"><span class="price-check">✓</span>Control operativo y checklist de validación</div>
-      <div class="price-inc-item"><span class="price-check">✓</span>Catálogo digital premium</div>
-      <div class="price-inc-item"><span class="price-check">✓</span>Agente de IA Domus (MVP)</div>
-      <div class="price-inc-item"><span class="price-check">✓</span>Seguimiento comercial base (CRM)</div>
-      <div class="price-inc-item"><span class="price-check">✓</span>Lineamientos de experiencia y crecimiento</div>
+  <div class="packages-shell">
+    <div class="packages-intro">
+      <p class="section-eyebrow reveal">Propuesta comercial</p>
+      <h2 class="section-title reveal reveal-delay-1" style="text-align:center;">Dos paquetes.<br>Una recomendación <em class="grad-text">clara.</em></h2>
+      <p class="section-body reveal reveal-delay-2" style="text-align:center;max-width:660px;margin:0 auto;">Ambos paquetes construyen Sistema Domus. Lo que cambia no es el nombre de los módulos, sino la profundidad con la que Domus queda lista para operar mejor, convertir mejor y crecer con orden.</p>
     </div>
-    <p class="price-tagline">El primer paso no es pequeño. Es el cimiento.</p>
+
+    <div class="package-cards">
+      <div class="package-card reveal reveal-delay-2">
+        <div class="package-kicker">Ruta 01</div>
+        <h3 class="package-name">Sistema Domus Base</h3>
+        <p class="package-micro">Ordena la operación y corrige el problema actual.</p>
+        <div class="package-amount"><span>$</span>98,000</div>
+        <div class="package-unit">MXN · Estructura sólida de arranque</div>
+
+        <div class="package-shared">
+          <div class="package-shared-label">En ambos paquetes</div>
+          <div class="package-core">
+            <span class="package-core-item">Inventario</span>
+            <span class="package-core-item">Catálogo</span>
+            <span class="package-core-item">Ecommerce</span>
+            <span class="package-core-item">Agente IA</span>
+          </div>
+        </div>
+
+        <div class="package-depth">
+          <div class="package-depth-label">Lo que sí hace</div>
+          <div class="package-depth-item"><span class="package-depth-mark">✓</span><span><strong>Ordena la tienda actual:</strong> baja errores y centraliza la verdad operativa.</span></div>
+          <div class="package-depth-item"><span class="package-depth-mark">✓</span><span><strong>Profesionaliza la venta:</strong> deja de depender de memoria, chats dispersos y seguimiento manual.</span></div>
+          <div class="package-depth-item"><span class="package-depth-mark">•</span><span><strong>Profundidad inicial:</strong> resuelve el presente, pero deja parte del crecimiento para una segunda etapa.</span></div>
+        </div>
+
+        <div class="package-cta-note">Ideal si Domus quisiera corregir la operación actual antes de profundizar en campañas, experiencias y expansión.</div>
+      </div>
+
+      <div class="package-card recommended reveal reveal-delay-3">
+        <div class="package-badge">Recomendado</div>
+        <div class="package-kicker">Ruta 02</div>
+        <h3 class="package-name">Sistema Domus Escalamiento</h3>
+        <p class="package-micro">La ruta correcta para la visión de Domus.</p>
+        <div class="package-amount"><span>$</span>168,000</div>
+        <div class="package-unit">MXN · Sistema con mayor profundidad comercial y de experiencia</div>
+
+        <div class="package-shared">
+          <div class="package-shared-label">En ambos paquetes</div>
+          <div class="package-core">
+            <span class="package-core-item">Inventario</span>
+            <span class="package-core-item">Catálogo</span>
+            <span class="package-core-item">Ecommerce</span>
+            <span class="package-core-item">Agente IA</span>
+          </div>
+        </div>
+
+        <div class="package-depth">
+          <div class="package-depth-label">Lo que cambia</div>
+          <div class="package-depth-item"><span class="package-depth-mark">✓</span><span><strong>Incluye la base operativa</strong> y la lleva a una profundidad más seria de conversión y seguimiento.</span></div>
+          <div class="package-depth-item"><span class="package-depth-mark">✓</span><span><strong>Fortalece la experiencia:</strong> mejor handoff humano, mejor preparación comercial y mejor lectura del cliente.</span></div>
+          <div class="package-depth-item"><span class="package-depth-mark">✓</span><span><strong>Deja lista la base para crecer:</strong> campañas, activaciones, eventos, atención premium y expansión hacia CDMX.</span></div>
+        </div>
+
+        <div class="package-cta-note">Recomendado porque corrige el presente y construye desde hoy la versión de Domus que quiere operar con orden, atención premium y capacidad real de crecer.</div>
+      </div>
+    </div>
+
+    <div class="compare-board reveal reveal-delay-4">
+      <div class="compare-head">
+        <div>Diferencia clave</div>
+        <div>Sistema Domus Base</div>
+        <div>Sistema Domus Escalamiento</div>
+      </div>
+
+      <div class="compare-row">
+        <div class="compare-label">Qué resuelve hoy</div>
+        <div class="compare-cell"><span class="compare-cell-title">Base</span>Corrige el desorden actual de tienda y operación.</div>
+        <div class="compare-cell compare-cell-featured"><span class="compare-cell-title">Escalamiento</span>Corrige el desorden actual y evita que el crecimiento vuelva a romper la operación.</div>
+      </div>
+
+      <div class="compare-row">
+        <div class="compare-label">Inventario y catálogo</div>
+        <div class="compare-cell"><span class="compare-cell-title">Base</span><strong>Los tiene.</strong> Dan orden central y un escaparate serio para vender mejor.</div>
+        <div class="compare-cell compare-cell-featured"><span class="compare-cell-title">Escalamiento</span><strong>También los tiene, pero con más profundidad.</strong> Quedan mejor conectados al flujo comercial y más listos para crecer sin rehacer procesos.</div>
+      </div>
+
+      <div class="compare-row">
+        <div class="compare-label">Agente IA</div>
+        <div class="compare-cell"><span class="compare-cell-title">Base</span>Recibe preguntas y filtra lo básico para pasar al equipo.</div>
+        <div class="compare-cell compare-cell-featured"><span class="compare-cell-title">Escalamiento</span>Clasifica mejor, alimenta el flujo comercial y entrega un handoff humano mucho más útil.</div>
+      </div>
+
+      <div class="compare-row">
+        <div class="compare-label">Ecommerce y cierre</div>
+        <div class="compare-cell"><span class="compare-cell-title">Base</span>Permite apartado y solicitud con un flujo correcto y elegante.</div>
+        <div class="compare-cell compare-cell-featured"><span class="compare-cell-title">Escalamiento</span>Permite un flujo más pulido para convertir mejor y sostener seguimiento premium hasta el cierre.</div>
+      </div>
+
+      <div class="compare-row">
+        <div class="compare-label">Experiencia y seguimiento</div>
+        <div class="compare-cell"><span class="compare-cell-title">Base</span>Da seguimiento base para no perder prospectos y ordenar la atención.</div>
+        <div class="compare-cell compare-cell-featured"><span class="compare-cell-title">Escalamiento</span>Fortalece seguimiento, experiencia, campañas y activaciones para operar una marca más madura.</div>
+      </div>
+
+      <div class="compare-row">
+        <div class="compare-label">Preparación para crecer</div>
+        <div class="compare-cell"><span class="compare-cell-title">Base</span>Ordena la tienda actual.</div>
+        <div class="compare-cell compare-cell-featured"><span class="compare-cell-title">Escalamiento</span>Ordena la tienda y deja lista la base para eventos, experiencias, campañas y crecimiento hacia CDMX.</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1971,19 +2586,24 @@ section {
 
 <!-- ══════════════════════════ S15 · CIERRE ══════════════════════════ -->
 <section id="s15" class="auto-section">
-  <h2 class="cierre-title reveal">Sin base no hay orden.<br>Sin orden no hay <em class="grad-text">escala.</em></h2>
-  <p class="cierre-body reveal reveal-delay-1">Domus ya tiene valor de marca. La siguiente etapa exige estructura. Este sistema está diseñado para proteger lo que ya existe y construir lo que sigue.</p>
+  <div class="cierre-badge reveal">Recomendación final</div>
+  <h2 class="cierre-title reveal reveal-delay-1">La ruta recomendada es<br><em class="grad-text">Sistema Domus Escalamiento.</em></h2>
+  <p class="cierre-body reveal reveal-delay-2">Si la visión real de Domus incluye orden, atención premium, experiencias, campañas y crecimiento hacia CDMX, conviene construir esa profundidad desde el inicio, no intentar pegarla después.</p>
   <div class="cierre-pillars reveal reveal-delay-2">
-    <div class="cierre-pillar">Proteger la operación</div>
-    <div class="cierre-pillar">Profesionalizar la venta</div>
-    <div class="cierre-pillar">Filtrar mejor la demanda</div>
-    <div class="cierre-pillar">Elevar la experiencia</div>
-    <div class="cierre-pillar">Preparar el crecimiento</div>
+    <div class="cierre-pillar">Orden operativo serio</div>
+    <div class="cierre-pillar">Atención premium</div>
+    <div class="cierre-pillar">Mejor conversión</div>
+    <div class="cierre-pillar">Campañas y experiencias</div>
+    <div class="cierre-pillar">Base real para CDMX</div>
   </div>
-  <p class="cierre-final reveal reveal-delay-3">Mi recomendación es arrancar con esta base ahora.<br>Porque sobre esta base sí puede venir lo demás.<br>Pero si no construimos la columna vertebral, lo demás se vuelve improvisación cara.</p>
-  <div class="cierre-cta reveal reveal-delay-4">
-    <button class="btn-primary" style="font-size:17px;padding:16px 36px;">Arrancar ahora</button>
-    <button class="btn-secondary" style="font-size:17px;padding:16px 36px;">Ver propuesta detallada</button>
+  <p class="cierre-final reveal reveal-delay-3">Base corrige el presente. Escalamiento corrige el presente y deja lista la siguiente etapa de Domus. Por eso es la recomendación correcta para arrancar ahora.</p>
+  <div class="cierre-recommendation reveal reveal-delay-4">
+    <div class="cierre-reco-title">Por qué cerrar con Escalamiento</div>
+    <p class="cierre-reco-body">Porque alinea la operación con la visión completa de Domus: orden interno, atención premium, mejor experiencia del cliente, campañas mejor soportadas y una base seria para crecer hacia CDMX sin improvisación cara.</p>
+  </div>
+  <div class="cierre-cta reveal reveal-delay-5">
+    <button class="btn-primary" style="font-size:17px;padding:16px 36px;" onclick="document.getElementById('s13').scrollIntoView({behavior:'smooth'})">Arrancar con Escalamiento</button>
+    <button class="btn-secondary" style="font-size:17px;padding:16px 36px;" onclick="document.getElementById('s12b').scrollIntoView({behavior:'smooth'})">Ver comparación de rutas</button>
   </div>
 </section>
 
@@ -2105,7 +2725,7 @@ playBtn.addEventListener('click', () => {
       } else {
         autoSections[currentSecIdx].scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    }, 5500);
+    }, 7500);
   }
 });
 </script>
